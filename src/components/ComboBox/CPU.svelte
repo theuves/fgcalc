@@ -1,4 +1,6 @@
 <script>
+    export let value
+
     const values = [
         0.25,
         0.5,
@@ -8,7 +10,13 @@
     ]
 </script>
 
-<select>
+<style>
+    select {
+        width: 100%;
+    }
+</style>
+
+<select bind:value={value}>
     {#each values as value}
         <option value={value}>
             {value} vCPU

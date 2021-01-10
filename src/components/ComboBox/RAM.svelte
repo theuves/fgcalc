@@ -1,6 +1,13 @@
 <script>
-    const defaultCPU = 0.25;
-    export const cpu = defaultCPU;
+    export let cpu
+    export let value
+
+    let values
+
+    $: {
+       values = getValues(cpu) 
+       value = values[0]
+    }
 
     /**
      * @example
@@ -10,7 +17,7 @@
     function getRange(start, end) {
         return Array(end - start + 1)
             .fill(start)
-            .map((item, index) => item + index);
+            .map((item, index) => item + index)
     }
 
     function getValues(currentCPU) {
@@ -24,17 +31,21 @@
             '1': getRange(2, 8),
             '2': getRange(4, 16),
             '4': getRange(8, 30),
-        };
+        }
 
         return currentCPU in possibleRAMValues
             ? possibleRAMValues[currentCPU]
-            : possibleRAMValues[defaultCPU];
+            : possibleRAMValues[Object.keys(possibleRAMValues)[0]]
     }
-
-    const values = getValues(cpu);
 </script>
 
-<select>
+<style>
+    select {
+        width: 100%;
+    }
+</style>
+
+<select bind:value={value}>
     {#each values as value}
         <option value={value}>
             {value} GiB
