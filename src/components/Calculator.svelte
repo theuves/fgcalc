@@ -38,32 +38,62 @@
     .result {
         text-align: center;
     }
+    .price {
+        font-size: 3.25em;
+        font-family: 'Roboto Mono', monospace;
+    }
     .table {
-        width: 100%;
+        width: 80%;
+        margin: 0 auto;
+        font-family: 'Roboto Mono', monospace;
+    }
+    .input-container:not(:last-child) {
+        margin-bottom: 15px;
+    }
+    .label {
+        user-select: none;
+    }
+    .label:hover {
+        opacity: .9;;
+    }
+    .label:active {
+        opacity: 1;;
     }
 </style>
 
 <div class="calculator">
     <div class="actions">
-        <TimePicker bind:value={timeValue} bind:type={timeType} />
-        <CPU bind:value={cpu} />
-        <RAM bind:value={ram} cpu={cpu} />
-        <label>
-            <input type="checkbox" bind:checked={isSpot} /> Is Fargate Spot?
-        </label>
+        <div class="input-container">
+            <TimePicker bind:value={timeValue} bind:type={timeType} />
+        </div>
+        <div class="input-container">
+            <CPU bind:value={cpu} />
+        </div>
+        <div class="input-container">
+            <RAM bind:value={ram} cpu={cpu} />
+        </div>
+        <div class="input-container">
+            <label class="label">
+                <input type="checkbox" bind:checked={isSpot} /> Is <b>Fargate Spot</b>?
+            </label>
+        </div>
     </div>
     <div class="result">
-        <h1>
+        <h1 class="price">
             {formatPrice(price)}
         </h1>
         <table class="table">
             <tr>
-                <td>vCPU</td>
+                <td>
+                    <b>vCPU</b>
+                </td>
                 <td>{formatPrice(cpuPrice)}</td>
                 <td>{(cpuPrice / price * 100).toFixed(2)}%</td>
             </tr>
             <tr>
-                <td>GiB</td>
+                <td>
+                    <b>GiB</b>
+                </td>
                 <td>{formatPrice(ramPrice)}</td>
                 <td>{(ramPrice / price * 100).toFixed(2)}%</td>
             </tr>

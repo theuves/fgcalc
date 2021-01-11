@@ -14,7 +14,7 @@
         display: flex;
     }
     .input {
-        width: 70px;
+        width: 80px;
         margin-right: 10px;
     }
     .select {

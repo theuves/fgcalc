@@ -10,27 +10,41 @@
 <style>
     .header {
         padding: 15px 10px;
+        background-color: #232f3e;
+        box-shadow: 0px 2px 5px -2px #333;
+    }
+    .container {
+        width: 1200px;
+        margin: 0 auto;
         display: flex;
         align-items: center;
         align-content: center;
         justify-content: space-between;
-        border-bottom: solid 1px gray;
     }
     .title {
         margin: 0;
+        margin-bottom: 5px;
         padding: 0;
         line-height: 100%;
+        font-style: italic;
+        color: white;
+    }
+    .description {
+        color: #aaa;
+        margin: 0;
+        padding: 0;
     }
 </style>
 
 <header class="header">
-    <div>
-        <h1 class="title">
-            FGCalc
-        </h1>
-    </div>
-    <div>
-        <Currency bind:value={currency} currencyList={currencyList} />
-        <Region bind:value={region} />
+    <div class="container">
+        <div>
+            <h1 class="title">FGCalc</h1>
+            <p class="description">The Fargate Calculator.</p>
+        </div>
+        <div>
+            <Currency bind:value={currency} currencyList={currencyList} />
+            <Region bind:value={region} />
+        </div>
     </div>
 </header>
