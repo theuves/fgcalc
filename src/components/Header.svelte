@@ -4,6 +4,7 @@
 
     export let region
     export let currency
+    export let currencyList
 </script>
 
 <style>
@@ -29,7 +30,7 @@
         </h1>
     </div>
     <div>
-        <Currency bind:value={currency} />
+        <Currency bind:value={currency} currencyList={currencyList} />
         <Region bind:value={region} />
     </div>
 </header>

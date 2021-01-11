@@ -5,8 +5,7 @@
     let values
 
     $: {
-       values = getValues(cpu) 
-       value = values[0]
+       values = getValues(cpu)
     }
 
     /**

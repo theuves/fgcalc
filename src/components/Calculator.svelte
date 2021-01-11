@@ -3,19 +3,23 @@
     import RAM from './ComboBox/RAM.svelte'
     import TimePicker from './TimePicker.svelte'
 
-    let formattedPrice
-
     export let cpu
     export let ram
     export let timeValue
     export let timeType
     export let currency
     export let price
+    export let cpuPrice
+    export let ramPrice
+    export let isSpot
 
-    $: {
-        formattedPrice = price.toLocaleString('en-US', {
+    function formatPrice(value) {
+        value = value || 0
+        // return value.toFixed(3)
+        return value.toLocaleString('en-US', {
             style: 'currency',
-            currency: currency
+            currency,
+            minimumFractionDigits: 3
         })
     }
 </script>
@@ -34,6 +38,9 @@
     .result {
         text-align: center;
     }
+    .table {
+        width: 100%;
+    }
 </style>
 
 <div class="calculator">
@@ -41,10 +48,25 @@
         <TimePicker bind:value={timeValue} bind:type={timeType} />
         <CPU bind:value={cpu} />
         <RAM bind:value={ram} cpu={cpu} />
+        <label>
+            <input type="checkbox" bind:checked={isSpot} /> Is Fargate Spot?
+        </label>
     </div>
     <div class="result">
         <h1>
-            USD {formattedPrice}
+            {formatPrice(price)}
         </h1>
+        <table class="table">
+            <tr>
+                <td>vCPU</td>
+                <td>{formatPrice(cpuPrice)}</td>
+                <td>{(cpuPrice / price * 100).toFixed(2)}%</td>
+            </tr>
+            <tr>
+                <td>GiB</td>
+                <td>{formatPrice(ramPrice)}</td>
+                <td>{(ramPrice / price * 100).toFixed(2)}%</td>
+            </tr>
+        </table>
     </div>
 </div>
