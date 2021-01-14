@@ -12,6 +12,7 @@
         padding: 15px 10px;
         background-color: #232f3e;
         box-shadow: 0px 2px 5px -2px #333;
+        margin-bottom: 40px;
     }
     .container {
         width: 1200px;

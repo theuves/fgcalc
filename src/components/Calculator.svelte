@@ -11,11 +11,14 @@
     export let price
     export let cpuPrice
     export let ramPrice
-    export let isSpot
+    export let priceSpot
+    export let cpuPriceSpot
+    export let ramPriceSpot
+    export let capacityFargate
+    export let capacityFargateSpot
 
     function formatPrice(value) {
         value = value || 0
-        // return value.toFixed(3)
         return value.toLocaleString('en-US', {
             style: 'currency',
             currency,
@@ -29,6 +32,10 @@
         display: flex;
         width: 900px;
         margin: 0 auto;
+        padding: 10px 40px;
+        background-color: white;
+        box-shadow: 1px 1px 1px 1px #ccc;
+        border-radius: 2px;
     }
     .actions,
     .result {
@@ -37,9 +44,10 @@
     }
     .result {
         text-align: center;
+        border-left: 1px solid #ccc;
     }
     .price {
-        font-size: 3.25em;
+        font-size: 3em;
         font-family: 'Roboto Mono', monospace;
     }
     .table {
@@ -48,16 +56,11 @@
         font-family: 'Roboto Mono', monospace;
     }
     .input-container:not(:last-child) {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
-    .label {
-        user-select: none;
-    }
-    .label:hover {
-        opacity: .9;;
-    }
-    .label:active {
-        opacity: 1;;
+    .capacity-input {
+        width: 80px;
+        margin-right: 10px;
     }
 </style>
 
@@ -73,29 +76,54 @@
             <RAM bind:value={ram} cpu={cpu} />
         </div>
         <div class="input-container">
-            <label class="label">
-                <input type="checkbox" bind:checked={isSpot} /> Is <b>Fargate Spot</b>?
-            </label>
+            <input type="number" class="capacity-input" min="0" bind:value={capacityFargate}>
+            &times; <b>FARGATE</b>
+        </div>
+        <div class="input-container">
+            <input type="number" class="capacity-input" min="0" bind:value={capacityFargateSpot}>
+            &times; <b>FARGATE_SPOT</b>
         </div>
     </div>
     <div class="result">
         <h1 class="price">
-            {formatPrice(price)}
+            {formatPrice((price || 0) + (priceSpot || 0))}
         </h1>
-        <table class="table">
+        <table class="table" style="margin-bottom: 20px;">
+            <tr>
+                <th colspan="3">FARGATE</th>
+            </tr>
             <tr>
                 <td>
                     <b>vCPU</b>
                 </td>
                 <td>{formatPrice(cpuPrice)}</td>
-                <td>{(cpuPrice / price * 100).toFixed(2)}%</td>
+                <td>{(cpuPrice / price * 100 || 0).toFixed(2)}%</td>
             </tr>
             <tr>
                 <td>
                     <b>GiB</b>
                 </td>
                 <td>{formatPrice(ramPrice)}</td>
-                <td>{(ramPrice / price * 100).toFixed(2)}%</td>
+                <td>{(ramPrice / price * 100 || 0).toFixed(2)}%</td>
+            </tr>
+        </table>
+        <table class="table">
+            <tr>
+                <th colspan="3">FARGATE_SPOT</th>
+            </tr>
+            <tr>
+                <td>
+                    <b>vCPU</b>
+                </td>
+                <td>{formatPrice(cpuPriceSpot)}</td>
+                <td>{(cpuPriceSpot / priceSpot * 100 || 0).toFixed(2)}%</td>
+            </tr>
+            <tr>
+                <td>
+                    <b>GiB</b>
+                </td>
+                <td>{formatPrice(ramPriceSpot)}</td>
+                <td>{(ramPriceSpot / priceSpot * 100 || 0).toFixed(2)}%</td>
             </tr>
         </table>
     </div>

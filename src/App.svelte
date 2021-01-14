@@ -10,13 +10,18 @@
     let ram       = 2
     let timeValue = 1
 	let timeType  = 'month'
-	let isSpot    = false
+
+	let capacityFargate      = 1
+	let capacityFargateSpot  = 0
 
 	let currencyRates = {USD: '1.0'}
 
-	let totalPrice = 0
+	let totalPrice
 	let totalPriceCPU
 	let totalPriceRAM
+	let totalPriceSpot
+	let totalPriceCPUSpot
+	let totalPriceRAMSpot
 
 	function getTime(value, type) {
 		switch (type) {
@@ -45,21 +50,34 @@
 	updateCurrencyRates()
 	setInterval(updateCurrencyRates, THIRTY_SECONDS)
 
-	afterUpdate(() => {
+	const getPrices = (capacity) => {
 		const {prices} = data.filter(item => item.region === region)[0]
 		const time = getTime(timeValue, timeType)
 
 		let {
 			cpu: cpuPrice,
 			ram: ramPrice,
-		} = prices[isSpot ? 'spot' : 'normal']
+		} = prices[capacity]
 
 		cpuPrice = cpuPrice * Number(currencyRates[currency])
 		ramPrice = ramPrice * Number(currencyRates[currency])
 		
-		totalPriceCPU = cpuPrice * cpu * time
-		totalPriceRAM = ramPrice * ram * time
-		totalPrice = totalPriceCPU + totalPriceRAM
+		return {
+			cpu: cpuPrice * cpu * time,
+			ram: ramPrice * ram * time
+		}
+	}
+
+	afterUpdate(() => {
+		const prices = getPrices('normal')
+		const pricesSpot = getPrices('spot')
+
+		totalPrice        = capacityFargate * (prices.cpu + prices.ram)
+		totalPriceCPU     = capacityFargate * prices.cpu
+		totalPriceRAM     = capacityFargate * prices.ram
+		totalPriceSpot    = capacityFargateSpot * (pricesSpot.cpu + pricesSpot.ram)
+		totalPriceCPUSpot = capacityFargateSpot * pricesSpot.cpu
+		totalPriceRAMSpot = capacityFargateSpot * pricesSpot.ram
 	})
 </script>
 
@@ -80,10 +98,14 @@
 		bind:ram={ram}
 		bind:timeValue={timeValue}
 		bind:timeType={timeType}
-		bind:isSpot={isSpot}
+		bind:capacityFargate={capacityFargate}
+		bind:capacityFargateSpot={capacityFargateSpot}
 		currency={currency}
 		price={totalPrice}
 		cpuPrice={totalPriceCPU}
 		ramPrice={totalPriceRAM}
+		priceSpot={totalPriceSpot}
+		cpuPriceSpot={totalPriceCPUSpot}
+		ramPriceSpot={totalPriceRAMSpot}
 	/>
 </main>
