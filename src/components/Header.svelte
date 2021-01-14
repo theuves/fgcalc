@@ -40,7 +40,7 @@
     <div class="container">
         <div>
             <h1 class="title">FGCalc</h1>
-            <p class="description">The Fargate Calculator.</p>
+            <p class="description">AWS Fargate Pricing Calculator.</p>
         </div>
         <div>
             <Currency bind:value={currency} currencyList={currencyList} />
