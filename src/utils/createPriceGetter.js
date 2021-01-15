@@ -17,9 +17,9 @@ export default function getPrices(options) {
 
         const priceCPU = capacity * cpuPrice * exchangeRate * options.cpu * time
         const priceRAM = capacity * ramPrice * exchangeRate * options.ram * time
-        
+
         return {
-            total: priceCPU * priceRAM,
+            total: priceCPU + priceRAM,
             cpu: priceCPU,
             ram: priceRAM,
         }
