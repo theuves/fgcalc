@@ -16,6 +16,9 @@
         margin-right: var(--margin);
         margin-bottom: 0;
     }
+    .input:invalid {
+        background-color: pink;
+    }
     .label {
         font-weight: bold;
     }

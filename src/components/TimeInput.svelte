@@ -18,6 +18,9 @@
         width: 80px;
         margin-right: var(--margin);
     }
+    .input:invalid {
+        background-color: pink;
+    }
     .select {
         flex: 1;
     }
