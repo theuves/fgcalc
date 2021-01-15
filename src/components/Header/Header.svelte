@@ -1,6 +1,6 @@
 <script>
-    import Region from './ComboBox/Region.svelte'
-    import Currency from './ComboBox/Currency.svelte'
+    import RegionInput from './RegionInput.svelte'
+    import CurrencyInput from './CurrencyInput.svelte'
 
     export let region
     export let currency
@@ -44,8 +44,8 @@
             <p class="description">AWS Fargate Pricing Calculator.</p>
         </div>
         <div>
-            <Currency bind:value={currency} currencyList={currencyList} />
-            <Region bind:value={region} />
+            <CurrencyInput bind:value={currency} currencyList={currencyList} />
+            <RegionInput bind:value={region} />
         </div>
     </div>
 </header>

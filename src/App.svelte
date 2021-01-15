@@ -1,111 +1,142 @@
 <script>
-	import data from './utils/data.js'
-	import {afterUpdate} from 'svelte'
-	import Header from './components/Header.svelte';
-	import Calculator from './components/Calculator.svelte';
+	// Svelte
+	import {afterUpdate, onMount} from 'svelte'
 
-	let region    = 'us-east-1'
-	let currency  = 'USD'
-	let cpu       = 1
-    let ram       = 2
+	// Utils
+	import createPriceGetter from './utils/createPriceGetter'
+	import getExchangeRates from './utils/getExchangeRates'
+	import formatPrice from './utils/formatPrice'
+
+	// Components
+	import Header from './components/Header/Header.svelte';
+	import TimeInput from './components/TimeInput.svelte'
+	import CPUInput from './components/CPUInput.svelte'
+	import RAMInput from './components/RAMInput.svelte'
+	import CapacityInput from './components/CapacityInput.svelte'
+	import Table from './components/Table.svelte'
+
+	// Header inputs
+	let region = 'us-east-1'
+	let currency = 'USD'
+
+	// Form inputs
+	let cpu = 1
+    let ram = 2
     let timeValue = 1
-	let timeType  = 'month'
-
-	let capacityFargate      = 1
-	let capacityFargateSpot  = 0
+	let timeType = 'month'
+	let capacityFargate = 1
+	let capacityFargateSpot = 0
 
 	let currencyRates = {USD: '1.0'}
 
-	let totalPrice
-	let totalPriceCPU
-	let totalPriceRAM
-	let totalPriceSpot
-	let totalPriceCPUSpot
-	let totalPriceRAMSpot
-
-	function getTime(value, type) {
-		switch (type) {
-			case 'hour':
-			default:
-				return value * 1
-			case 'day':
-				return value * 24
-			case 'month':
-				return value * 730
-			case 'year':
-				return value * 8760
-		}
+	let prices = {
+		total: 0,
+		fargatePrice: {
+			total: 0,
+			cpu: 0,
+			ram: 0,
+		},
+		fargateSpotPrice: {
+			total: 0,
+			cpu: 0,
+			ram: 0,
+		},
 	}
 
 	function updateCurrencyRates() {
-		console.info('[INFO] Updated exchange rates.')
-		fetch('https://api.exchangeratesapi.io/latest?base=USD')
-			.then(response => response.json())
-			.then(data => {
-				currencyRates = data.rates
-			})
+		getExchangeRates().then(rates => {
+			console.info('[INFO] Updated exchange rates.')
+			currencyRates = rates
+		})
 	}
-	
-	const THIRTY_SECONDS = 30000
-	updateCurrencyRates()
-	setInterval(updateCurrencyRates, THIRTY_SECONDS)
 
-	const getPrices = (capacity) => {
-		const {prices} = data.filter(item => item.region === region)[0]
-		const time = getTime(timeValue, timeType)
-
-		let {
-			cpu: cpuPrice,
-			ram: ramPrice,
-		} = prices[capacity]
-
-		cpuPrice = cpuPrice * Number(currencyRates[currency])
-		ramPrice = ramPrice * Number(currencyRates[currency])
-		
-		return {
-			cpu: cpuPrice * cpu * time,
-			ram: ramPrice * ram * time
-		}
-	}
+	onMount(() => {
+		const onMinute = 1 * 60 * 1000
+		updateCurrencyRates()
+		setInterval(updateCurrencyRates, onMinute)
+	})
 
 	afterUpdate(() => {
-		const prices = getPrices('normal')
-		const pricesSpot = getPrices('spot')
+		const getPrices = createPriceGetter({
+			region,
+			time: {
+				value: timeValue,
+				type: timeType
+			},
+			exchangeRate: currencyRates[currency],
+			cpu,
+			ram,
+		})
 
-		totalPrice        = capacityFargate * (prices.cpu + prices.ram)
-		totalPriceCPU     = capacityFargate * prices.cpu
-		totalPriceRAM     = capacityFargate * prices.ram
-		totalPriceSpot    = capacityFargateSpot * (pricesSpot.cpu + pricesSpot.ram)
-		totalPriceCPUSpot = capacityFargateSpot * pricesSpot.cpu
-		totalPriceRAMSpot = capacityFargateSpot * pricesSpot.ram
+		const fargatePrice = getPrices(capacityFargate, 'FARGATE')
+		const fargateSpotPrice = getPrices(capacityFargateSpot, 'FARGATE_SPOT')
+
+		prices = {
+			total: fargatePrice.total + fargateSpotPrice.total,
+			fargatePrice,
+			fargateSpotPrice,
+		}
 	})
 </script>
 
 <style>
-	main {
+	.main {
 		margin: 0 auto;
+	}
+	.main {
+		display: flex;
+        width: 900px;
+        margin: 0 auto;
+        padding: 10px 40px;
+        background-color: white;
+        box-shadow: 1px 1px 1px 1px #ccc;
+        border-radius: 2px;
+	}
+	.main > * {
+		flex: 1;
+        margin: 50px 20px;
+	}
+	.estimate {
+		text-align: center;
+	}
+	.estimate-price {
+		font-size: 3em;
+        font-family: 'Roboto Mono', monospace;
 	}
 </style>
 
-<main>
+<div class="container">
 	<Header
 		bind:region={region}
 		bind:currency={currency}
 		currencyList={Object.keys(currencyRates)}
 	/>
-	<Calculator
-		bind:cpu={cpu}
-		bind:ram={ram}
-		bind:timeValue={timeValue}
-		bind:timeType={timeType}
-		bind:capacityFargate={capacityFargate}
-		bind:capacityFargateSpot={capacityFargateSpot}
-		currency={currency}
-		price={totalPrice}
-		cpuPrice={totalPriceCPU}
-		ramPrice={totalPriceRAM}
-		priceSpot={totalPriceSpot}
-		cpuPriceSpot={totalPriceCPUSpot}
-		ramPriceSpot={totalPriceRAMSpot}
-	/>
-</main>
+	<main class="main">
+		<form class="form">
+			<TimeInput bind:value={timeValue} bind:type={timeType} />
+			<CPUInput bind:value={cpu} />
+			<RAMInput bind:value={ram} cpu={cpu} />
+			<CapacityInput value={1} name="FARGATE" />
+			<CapacityInput value={0} name="FARGATE_SPOT" />
+		</form>
+		<div class="estimate">
+			<h1 class="estimate-price">
+				{formatPrice(prices.total, currency)}
+			</h1>
+			<Table
+				name="FARGATE"
+				currency={currency}
+				cpu={prices.fargatePrice.cpu}
+				ram={prices.fargatePrice.ram}
+				total={prices.total}
+			/>
+			<Table
+				name="FARGATE_SPOT"
+				currency={currency}
+				cpu={prices.fargateSpotPrice.cpu}
+				ram={prices.fargateSpotPrice.ram}
+				total={prices.total}
+			/>
+		</div>
+	</main>
+</div>

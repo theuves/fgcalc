@@ -10,19 +10,24 @@
 </script>
 
 <style>
-    .main {
+    .container {
         display: flex;
+        margin-bottom: var(--margin);
     }
     .input {
         width: 80px;
-        margin-right: 10px;
+        margin-right: var(--margin);
     }
     .select {
         flex: 1;
     }
+    .input,
+    .select {
+        margin-bottom: 0 !important;
+    }
 </style>
 
-<div class="main">
+<div class="container">
     <input class="input" type="number" bind:value={value} min="1" />
     <select class="select" bind:value={type}>
         <option value="hour">

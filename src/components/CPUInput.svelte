@@ -11,12 +11,13 @@
 </script>
 
 <style>
-    select {
+    .select {
         width: 100%;
+        margin-bottom: var(--margin);
     }
 </style>
 
-<select bind:value={value}>
+<select class="select" bind:value={value}>
     {#each values as value}
         <option value={value}>
             {value} vCPU
