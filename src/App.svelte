@@ -57,6 +57,14 @@
 	})
 
 	afterUpdate(() => {
+		if (
+			   capacityFargate < 0
+			|| capacityFargateSpot < 0
+			|| timeValue < 0
+		) {
+			return
+		}
+
 		const getPrices = createPriceGetter({
 			region,
 			time: {
@@ -100,6 +108,7 @@
 		text-align: center;
 	}
 	.estimate-price {
+		margin: 25px 0;
 		font-size: 3em;
         font-family: 'Roboto Mono', monospace;
 	}
@@ -116,8 +125,8 @@
 			<TimeInput bind:value={timeValue} bind:type={timeType} />
 			<CPUInput bind:value={cpu} />
 			<RAMInput bind:value={ram} cpu={cpu} />
-			<CapacityInput value={1} name="FARGATE" />
-			<CapacityInput value={0} name="FARGATE_SPOT" />
+			<CapacityInput bind:value={capacityFargate} name="FARGATE" />
+			<CapacityInput bind:value={capacityFargateSpot} name="FARGATE_SPOT" />
 		</form>
 		<div class="estimate">
 			<h1 class="estimate-price">
