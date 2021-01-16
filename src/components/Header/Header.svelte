@@ -27,21 +27,17 @@
         margin-bottom: 5px;
         padding: 0;
         line-height: 100%;
-        font-style: italic;
+        font-weight: lighter;
         color: white;
-    }
-    .description {
-        color: #aaa;
-        margin: 0;
-        padding: 0;
     }
 </style>
 
 <header class="header">
     <div class="container">
         <div>
-            <h1 class="title">FGCalc</h1>
-            <p class="description">AWS Fargate Pricing Calculator.</p>
+            <h1 class="title">
+                AWS Fargate Pricing Calculator
+            </h1>
         </div>
         <div>
             <CurrencyInput bind:value={currency} currencyList={currencyList} />
