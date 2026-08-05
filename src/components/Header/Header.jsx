@@ -41,7 +41,7 @@ export default function Header({
             <h1 className="text-sm sm:text-base md:text-lg font-semibold tracking-tight text-[var(--aws-header-text)] leading-tight shrink-0 max-sm:text-[11px]">
               <span className="font-bold">AWS</span>
               <span className="text-[var(--aws-accent)]"> Fargate </span>
-              <span>{messages?.header?.titleMain || 'Calculator'}</span>
+              <span>Calculator</span>
             </h1>
             <button
               type="button"
