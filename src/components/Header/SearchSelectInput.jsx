@@ -251,7 +251,7 @@ export default function SearchSelectInput({
                   placeholder={placeholder}
                   aria-controls={listId}
                   aria-describedby={statusId}
-                  className="w-full h-9 px-2 border border-[#d6deeb] text-[12px]"
+                  className="w-full h-9 px-2 border border-[#d6deeb] text-base sm:text-[12px]"
                 />
                 <button
                   type="button"

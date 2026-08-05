@@ -25,9 +25,9 @@ export default function TimeInput({
   };
 
     const inputClasses =
-        'w-16 sm:w-20 mr-2 sm:mr-3 bg-[var(--aws-surface)] border border-[var(--aws-border)] text-[var(--aws-ink)] text-sm rounded-sm px-2 py-2 focus:outline-none focus:ring-1 focus:ring-[var(--aws-accent)]';
+        'w-16 sm:w-20 mr-2 sm:mr-3 bg-[var(--aws-surface)] border border-[var(--aws-border)] text-[var(--aws-ink)] text-base sm:text-sm rounded-sm px-2 py-2 focus:outline-none focus:ring-1 focus:ring-[var(--aws-accent)]';
     const selectClasses =
-        'min-w-0 flex-1 bg-[var(--aws-surface)] border border-[var(--aws-border)] text-[var(--aws-ink)] text-sm rounded-sm px-2 py-2 focus:outline-none focus:ring-1 focus:ring-[var(--aws-accent)]';
+        'min-w-0 flex-1 bg-[var(--aws-surface)] border border-[var(--aws-border)] text-[var(--aws-ink)] text-base sm:text-sm rounded-sm px-2 py-2 focus:outline-none focus:ring-1 focus:ring-[var(--aws-accent)]';
 
     return (
         <div className="flex gap-2 mb-4">
