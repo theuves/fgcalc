@@ -1,5 +1,5 @@
-import data from './data'
-import getTime from './getTime'
+import data from './data.js'
+import getTime from './getTime.js'
 
 export default function getPrices(options) {
     return (capacity, capacityType) => {

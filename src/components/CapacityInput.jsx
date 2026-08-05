@@ -13,7 +13,10 @@ export default function CapacityInput({ name, value, onChange, id, ariaLabel }) 
                 min="0"
                 aria-label={ariaLabel || name}
                 value={value}
-                onChange={(e) => onChange(Number(e.target.value))}
+                onChange={(e) => {
+                  const nextValue = Number(e.target.value);
+                  onChange(Number.isFinite(nextValue) ? nextValue : 0);
+                }}
             />
             <label htmlFor={inputId} className="font-semibold text-[var(--aws-ink-soft)] flex items-center">
                 <span className="mr-3 text-[var(--aws-accent)]">&times;</span>

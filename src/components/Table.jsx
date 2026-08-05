@@ -1,7 +1,7 @@
 import React from 'react';
 import formatPrice from '../utils/formatPrice.js';
 
-export default function Table({ name, cpu, ram, total, currency, cpuLabel = 'vCPU', ramLabel = 'GiB' }) {
+export default function Table({ name, cpu, ram, total, currency, locale = 'en', cpuLabel = 'vCPU', ramLabel = 'GiB' }) {
     const safeTotal = total || 1;
     return (
         <div className="overflow-hidden border border-[var(--aws-border)] bg-[var(--aws-surface)]">
@@ -16,14 +16,14 @@ export default function Table({ name, cpu, ram, total, currency, cpuLabel = 'vCP
                 <tbody>
                     <tr className="border-b border-[var(--aws-border)]">
                         <td className="px-4 py-3 font-medium text-[var(--aws-ink-soft)] w-1/4">{cpuLabel}</td>
-                        <td className="px-4 py-3">{formatPrice(cpu, currency)}</td>
+                        <td className="px-4 py-3">{formatPrice(cpu, currency, locale)}</td>
                         <td className="px-4 py-3 text-right text-[var(--aws-ink-soft)] w-1/4">
                             {((cpu / safeTotal) * 100 || 0).toFixed(2)}%
                         </td>
                     </tr>
                     <tr>
                         <td className="px-4 py-3 font-medium text-[var(--aws-ink-soft)] w-1/4">{ramLabel}</td>
-                        <td className="px-4 py-3">{formatPrice(ram, currency)}</td>
+                        <td className="px-4 py-3">{formatPrice(ram, currency, locale)}</td>
                         <td className="px-4 py-3 text-right text-[var(--aws-ink-soft)] w-1/4">
                             {((ram / safeTotal) * 100 || 0).toFixed(2)}%
                         </td>

@@ -12,12 +12,10 @@ export default async function getExchangeRates() {
             return data.rates;
         } else {
             console.error('[ERROR] Failed to fetch exchange rates:', data);
-            // Return USD only as fallback
-            return { USD: 1 };
+            return null;
         }
     } catch (error) {
         console.error('[ERROR] Exchange rate API error:', error);
-        // Return USD only as fallback
-        return { USD: 1 };
+        return null;
     }
 }

@@ -223,8 +223,9 @@ export default function SearchSelectInput({
           role="presentation"
           onMouseDown={closeModal}
           onTouchStart={closeModal}
+          onClick={closeModal}
         >
-          <div className="relative mx-auto mt-16 w-[min(90vw,720px)]" onMouseDown={(event) => event.stopPropagation()} onTouchStart={(event) => event.stopPropagation()}>
+          <div className="relative mx-auto mt-16 w-[min(90vw,720px)]">
             <div
               ref={panelRef}
               role="dialog"
@@ -235,6 +236,7 @@ export default function SearchSelectInput({
               className="mx-auto max-w-[320px] bg-[#ffffff] border border-[#d6deeb] shadow-xl"
               onMouseDown={(event) => event.stopPropagation()}
               onTouchStart={(event) => event.stopPropagation()}
+              onClick={(event) => event.stopPropagation()}
             >
               <h2 id={labelId} className="sr-only">
                 Select {label}
@@ -261,7 +263,7 @@ export default function SearchSelectInput({
                 </button>
               </div>
 
-              <div id={listId} role="listbox" aria-label={`${label} options`} className="max-h-72 overflow-auto p-1">
+              <div id={listId} role="listbox" aria-label={`${label} options`} className="flex max-h-72 flex-col items-stretch overflow-auto p-1">
                 {filtered.length === 0 ? (
                   <p id={statusId} role="status" className="text-xs p-2 text-[#64748b]">
                     {noResultsText}
@@ -283,10 +285,10 @@ export default function SearchSelectInput({
                           type="button"
                           role="option"
                           id={`${listId}-option-${index}`}
-                          aria-selected={isHighlighted}
+                          aria-selected={isSelected}
                           onMouseEnter={() => setHighlightedIndex(index)}
                           onClick={() => onSelect(optionValue)}
-                          className={`w-full text-left px-3 h-9 text-[12px] hover:bg-[#f8fafc] text-[#111827] ${
+                          className={`block w-full shrink-0 text-left px-3 h-9 text-[12px] hover:bg-[#f8fafc] text-[#111827] ${
                             isSelected || isHighlighted ? 'bg-[#f8fafc]' : ''
                           }`}
                         >

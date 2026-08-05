@@ -57,7 +57,7 @@ function App() {
   useEffect(() => {
     if (typeof document !== 'undefined' && locale) {
       document.documentElement.lang = locale;
-      document.title = messages?.documentTitle || 'AWS Fargate Pricing Calculator | fgcalc';
+      document.title = messages?.documentTitle || 'AWS Fargate Calculator';
     }
   }, [locale, messages]);
 
@@ -91,8 +91,12 @@ function App() {
 
       try {
         const rates = await getExchangeRates();
-        setCurrencyRates(rates);
-        console.info('[INFO] Exchange rates updated successfully.');
+        if (rates) {
+          setCurrencyRates(rates);
+          console.info('[INFO] Exchange rates updated successfully.');
+        } else {
+          console.warn('[WARN] Exchange rates unavailable; keeping the last valid rates.');
+        }
       } catch (error) {
         console.error('[ERROR] Failed to update exchange rates:', error);
       } finally {
@@ -113,7 +117,13 @@ function App() {
   // Calculate prices whenever relevant values change
   useEffect(() => {
     // Validate inputs
-    if (capacityFargate < 0 || capacityFargateSpot < 0 || timeValue < 0) {
+    const numericInputs = [capacityFargate, capacityFargateSpot, timeValue, cpu, ram];
+    if (
+      numericInputs.some((value) => !Number.isFinite(value))
+      || capacityFargate < 0
+      || capacityFargateSpot < 0
+      || timeValue < 1
+    ) {
       return;
     }
 
@@ -144,20 +154,12 @@ function App() {
     });
   }, [region, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot, currency, currencyRates]);
 
-  // Create filtered currency list with popular currencies first
+  // Keep the selector focused on the ten most relevant currencies.
   const availableCurrencies = useMemo(() => {
     const allCurrencies = Object.keys(currencyRates);
-
-    // Filter popular currencies that exist in the rates
-    const popular = POPULAR_CURRENCIES.filter(curr => allCurrencies.includes(curr));
-
-    // Get remaining currencies not in popular list
-    const others = allCurrencies
-      .filter(curr => !POPULAR_CURRENCIES.includes(curr))
-      .sort();
-
-    // Return popular currencies first, then others
-    return [...popular, ...others];
+    return POPULAR_CURRENCIES
+      .slice(0, 10)
+      .filter((currencyCode) => allCurrencies.includes(currencyCode));
   }, [currencyRates]);
 
   const projectDescription = messages?.project || [];
@@ -272,7 +274,7 @@ function App() {
                     role="status"
                     aria-live="polite"
                   >
-                    {formatPrice(prices.total, currency)}
+                    {formatPrice(prices.total, currency, locale)}
                   </h1>
                 </div>
 
@@ -280,18 +282,20 @@ function App() {
                   <Table
                     name={messages?.sections?.table?.fargate || 'Fargate'}
                     currency={currency}
+                    locale={locale}
                     cpu={prices.fargatePrice.cpu}
                     ram={prices.fargatePrice.ram}
-                    total={prices.total}
+                    total={prices.fargatePrice.total}
                     cpuLabel={messages?.sections?.table?.vcpuLabel || 'vCPU'}
                     ramLabel={messages?.sections?.table?.gibsLabel || 'GiB'}
                   />
                   <Table
                     name={messages?.sections?.table?.fargateSpot || 'Fargate Spot'}
                     currency={currency}
+                    locale={locale}
                     cpu={prices.fargateSpotPrice.cpu}
                     ram={prices.fargateSpotPrice.ram}
-                    total={prices.total}
+                    total={prices.fargateSpotPrice.total}
                     cpuLabel={messages?.sections?.table?.vcpuLabel || 'vCPU'}
                     ramLabel={messages?.sections?.table?.gibsLabel || 'GiB'}
                   />

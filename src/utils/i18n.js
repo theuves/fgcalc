@@ -13,7 +13,7 @@ export const getLocaleFromPath = (path) => {
 
 export const t = {
   en: {
-    documentTitle: 'AWS Fargate Pricing Calculator | fgcalc',
+    documentTitle: 'AWS Fargate Calculator',
     skipToCalculator: 'Skip to calculator',
     header: {
       titleMain: 'Calculator',
@@ -97,7 +97,7 @@ export const t = {
     },
   },
   pt: {
-    documentTitle: 'Calculadora de preços AWS Fargate | fgcalc',
+    documentTitle: 'AWS Fargate Calculator',
     skipToCalculator: 'Pular para a calculadora',
     header: {
       titleMain: 'Calculadora',
@@ -181,7 +181,7 @@ export const t = {
     },
   },
   es: {
-    documentTitle: 'Calculadora de precios de AWS Fargate | fgcalc',
+    documentTitle: 'AWS Fargate Calculator',
     skipToCalculator: 'Saltar al calculador',
     header: {
       titleMain: 'Calculadora',

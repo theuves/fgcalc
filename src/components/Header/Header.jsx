@@ -159,7 +159,7 @@ export default function Header({
             </a>
           </nav>
 
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col items-stretch gap-2">
             <nav aria-label="language" className="flex items-center gap-1 text-xs text-[var(--aws-header-muted)]">
               {Object.keys(LOCALE_LABELS).map((localeCode) => (
                 <a
@@ -182,14 +182,14 @@ export default function Header({
               ))}
             </nav>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col items-stretch gap-2">
               <CurrencyInput
                 value={currency}
                 onChange={setCurrency}
                 currencyList={currencyList}
                 t={messages}
                 locale={locale}
-                buttonWidthClass="min-w-[54px]"
+                buttonWidthClass="w-full min-w-0"
                 buttonHeightClass="h-7"
                 buttonTextClass="text-[10px]"
                 buttonPaddingClass="px-1"
@@ -198,7 +198,7 @@ export default function Header({
                 value={region}
                 onChange={setRegion}
                 t={messages}
-                buttonWidthClass="min-w-[112px]"
+                buttonWidthClass="w-full min-w-0"
                 buttonHeightClass="h-7"
                 buttonTextClass="text-[10px]"
                 buttonPaddingClass="px-1"

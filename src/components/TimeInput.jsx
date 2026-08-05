@@ -40,7 +40,10 @@ export default function TimeInput({
                 inputMode="numeric"
                 aria-label={valueAriaLabel}
                 aria-describedby={`${valueInputId}-helper`}
-                onChange={(e) => onValueChange(Number(e.target.value))}
+                onChange={(e) => {
+                  const nextValue = Number(e.target.value);
+                  onValueChange(Number.isFinite(nextValue) ? nextValue : 0);
+                }}
             />
             <select
                 id={typeInputId}
