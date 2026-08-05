@@ -1,27 +1,32 @@
 import React from 'react';
 import formatPrice from '../utils/formatPrice.js';
 
-export default function Table({ name, cpu, ram, total, currency }) {
+export default function Table({ name, cpu, ram, total, currency, cpuLabel = 'vCPU', ramLabel = 'GiB' }) {
+    const safeTotal = total || 1;
     return (
-        <div className="w-4/5 mx-auto mb-4 overflow-hidden rounded-lg shadow-sm border border-gray-200">
-            <table className="w-full text-sm text-left text-gray-500 font-mono">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+        <div className="overflow-hidden border border-[var(--aws-border)] bg-[var(--aws-surface)]">
+            <table className="w-full text-sm text-left text-[var(--aws-ink)] font-mono">
+                <thead className="text-[11px] text-[var(--aws-ink-soft)] uppercase bg-[var(--aws-bg)] border-b border-[var(--aws-border)]">
                     <tr>
-                        <th scope="col" className="px-6 py-3 bg-gray-100" colSpan="3">
-                            {name}
+                        <th scope="col" className="px-4 py-2 font-semibold" colSpan="3">
+                            <span className="border-l-2 border-[var(--aws-accent)] pl-2">{name}</span>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr className="bg-white border-b hover:bg-gray-50">
-                        <td className="px-6 py-4 font-bold">vCPU</td>
-                        <td className="px-6 py-4">{formatPrice(cpu, currency)}</td>
-                        <td className="px-6 py-4">{((cpu / total) * 100 || 0).toFixed(2)}%</td>
+                    <tr className="border-b border-[var(--aws-border)]">
+                        <td className="px-4 py-3 font-medium text-[var(--aws-ink-soft)] w-1/4">{cpuLabel}</td>
+                        <td className="px-4 py-3">{formatPrice(cpu, currency)}</td>
+                        <td className="px-4 py-3 text-right text-[var(--aws-ink-soft)] w-1/4">
+                            {((cpu / safeTotal) * 100 || 0).toFixed(2)}%
+                        </td>
                     </tr>
-                    <tr className="bg-white hover:bg-gray-50">
-                        <td className="px-6 py-4 font-bold">GiB</td>
-                        <td className="px-6 py-4">{formatPrice(ram, currency)}</td>
-                        <td className="px-6 py-4">{((ram / total) * 100 || 0).toFixed(2)}%</td>
+                    <tr>
+                        <td className="px-4 py-3 font-medium text-[var(--aws-ink-soft)] w-1/4">{ramLabel}</td>
+                        <td className="px-4 py-3">{formatPrice(ram, currency)}</td>
+                        <td className="px-4 py-3 text-right text-[var(--aws-ink-soft)] w-1/4">
+                            {((ram / safeTotal) * 100 || 0).toFixed(2)}%
+                        </td>
                     </tr>
                 </tbody>
             </table>

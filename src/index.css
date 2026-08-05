@@ -1,7 +1,52 @@
 @import "tailwindcss";
 
+/* AWS-inspired minimal color tokens */
+:root {
+  --aws-ink: #232f3e;
+  --aws-ink-soft: #4a5568;
+  --aws-bg: #f2f4f8;
+  --aws-surface: #ffffff;
+  --aws-border: #e6e8eb;
+  --aws-muted: #697386;
+  --aws-accent: #ff9900;
+  --aws-accent-soft: #fff4df;
+  --aws-link: #0073bb;
+  --aws-header-bg: #1f2937;
+  --aws-header-text: #f8fafc;
+  --aws-header-muted: #cfd5dd;
+}
+
 /* Custom styles */
 body {
-  background-color: #f9fafb;
-  color: #111827;
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--aws-bg);
+  color: var(--aws-ink);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--aws-accent);
+  outline-offset: 2px;
 }
