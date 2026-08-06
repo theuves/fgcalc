@@ -34,15 +34,18 @@ export default function TimeInput({
             <input
                 id={valueInputId}
                 className={inputClasses}
-                type="number"
+                type="text"
                 value={value}
                 min="1"
                 inputMode="numeric"
+                pattern="[0-9]*"
                 aria-label={valueAriaLabel}
                 aria-describedby={`${valueInputId}-helper`}
                 onChange={(e) => {
-                  const nextValue = Number(e.target.value);
-                  onValueChange(Number.isFinite(nextValue) ? nextValue : 0);
+                  const { value: nextValue } = e.target;
+                  if (/^\d*$/.test(nextValue)) {
+                    onValueChange(nextValue === '' ? '' : Number(nextValue));
+                  }
                 }}
             />
             <select

@@ -102,9 +102,9 @@ export const t = {
     header: {
       titleMain: 'Calculadora',
       links: {
-        home: 'início',
-        repo: 'repositório',
-        docs: 'documentação',
+        home: 'home',
+        repo: 'repo',
+        docs: 'docs',
       },
       updatingRates: 'Atualizando taxas de câmbio...',
       regionsAndCurrency: 'Controles de região e moeda',
@@ -186,9 +186,9 @@ export const t = {
     header: {
       titleMain: 'Calculadora',
       links: {
-        home: 'inicio',
-        repo: 'repositorio',
-        docs: 'documentación',
+        home: 'home',
+        repo: 'repo',
+        docs: 'docs',
       },
       updatingRates: 'Actualizando tipos de cambio...',
       regionsAndCurrency: 'Controles de región y moneda',

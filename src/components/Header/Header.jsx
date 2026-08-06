@@ -39,9 +39,14 @@ export default function Header({
         <div className="flex items-center justify-between gap-3 whitespace-nowrap max-sm:flex-col max-sm:items-stretch max-sm:gap-2 max-sm:py-1">
           <div className="flex items-center gap-3 flex-nowrap max-sm:justify-between max-sm:gap-2">
             <h1 className="text-sm sm:text-base md:text-lg font-semibold tracking-tight text-[var(--aws-header-text)] leading-tight shrink-0 max-sm:text-[11px]">
-              <span className="font-bold">AWS</span>
-              <span className="text-[var(--aws-accent)]"> Fargate </span>
-              <span>Calculator</span>
+              <a
+                href={`/${locale || 'en'}`}
+                className="inline-block hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--aws-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--aws-header-bg)]"
+              >
+                <span className="font-bold">AWS</span>
+                <span className="text-[var(--aws-accent)]"> Fargate </span>
+                <span>Calculator</span>
+              </a>
             </h1>
             <button
               type="button"

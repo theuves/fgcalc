@@ -9,13 +9,17 @@ export default function CapacityInput({ name, value, onChange, id, ariaLabel }) 
             <input
                 id={inputId}
                 className="w-20 sm:w-20 mr-2 sm:mr-3 bg-[var(--aws-surface)] border border-[var(--aws-border)] text-[var(--aws-ink)] text-base sm:text-sm rounded-sm px-2 py-2 invalid:bg-[#fee2e2] focus:outline-none focus:ring-1 focus:ring-[var(--aws-accent)]"
-                type="number"
+                type="text"
                 min="0"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 aria-label={ariaLabel || name}
                 value={value}
                 onChange={(e) => {
-                  const nextValue = Number(e.target.value);
-                  onChange(Number.isFinite(nextValue) ? nextValue : 0);
+                  const { value: nextValue } = e.target;
+                  if (/^\d*$/.test(nextValue)) {
+                    onChange(nextValue === '' ? '' : Number(nextValue));
+                  }
                 }}
             />
             <label htmlFor={inputId} className="font-semibold text-[var(--aws-ink-soft)] flex items-center">
