@@ -299,6 +299,12 @@ function App() {
                     cpuLabel={messages?.sections?.table?.vcpuLabel || 'vCPU'}
                     ramLabel={messages?.sections?.table?.gibsLabel || 'GiB'}
                   />
+                  <p
+                    className="border border-[var(--aws-border)] bg-[var(--aws-bg)] px-2 py-1 text-[10px] leading-tight text-[var(--aws-ink-soft)]"
+                    role="note"
+                  >
+                    {messages?.sections?.pricingUpdate || 'Base pricing last updated in January 2021.'}
+                  </p>
                 </div>
               </div>
             </section>
