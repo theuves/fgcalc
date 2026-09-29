@@ -8,11 +8,44 @@ export const LOCALE_LABELS = {
 
 export const getLocaleFromPath = (path) => {
   const firstSegment = path?.replace(/\/$/, '').split('/').filter(Boolean)[0] || '';
-  return SUPPORTED_LOCALES.includes(firstSegment) ? firstSegment : 'en';
+  return SUPPORTED_LOCALES.includes(firstSegment) ? firstSegment : 'pt';
 };
 
 export const t = {
   en: {
+    ui: {
+      headerByline: 'by Fidalgo IT Solutions', headerCta: 'Talk to Fidalgo',
+      calculatorIntroTitle: 'About this estimate',
+      calculatorIntroText: 'AWS Fargate runs containers without managing servers. Choose a region, vCPU, memory, duration, and task count to estimate Fargate and Fargate Spot compute costs.',
+      stepConfiguration: 'Your scenario', stepEstimate: 'Your result',
+      infrastructure: 'Infrastructure', resources: 'Resources per task', workload: 'Workload and duration',
+      totalCaption: 'Estimated cost for the selected period', breakdown: 'Cost breakdown',
+      pricingCaution: 'Indicative estimate; check current AWS pricing before making decisions.',
+      education: {
+        eyebrow: 'Understand the estimate',
+        title: 'What goes into a Fargate cost?',
+        intro: 'A quick guide to the service, this estimate, and costs outside its scope.',
+        source: 'Official AWS pricing',
+        cards: [
+          { title: 'AWS and Fargate', text: 'AWS provides cloud infrastructure. Fargate runs containers on ECS or EKS without your team managing servers.' },
+          { title: 'What this calculator includes', text: 'The estimate combines region, vCPU, memory, runtime, and task count for Fargate and Fargate Spot.' },
+          { title: 'Spot and extra charges', text: 'Fargate Spot uses interruptible capacity. Additional storage, data transfer, logs, and other AWS services can add charges.' },
+        ],
+      },
+      prefooter: {
+        eyebrow: 'Fidalgo IT Solutions',
+        title: 'Turn an estimate into a plan.',
+        text: 'Fidalgo works across software engineering, cloud infrastructure, and cost optimization. Let us review your context and identify practical next steps.',
+        cta: 'Talk to Fidalgo', secondary: 'Explore our services',
+      },
+      siteFooter: {
+        tagline: 'Technology engineering and consulting',
+        description: 'Technology aligned with business goals, with the technical clarity to build, run, and optimize.',
+        navigationLabel: 'Footer navigation', appTitle: 'Application', calculator: 'Calculator', awsPrices: 'AWS pricing', source: 'Source code',
+        companyTitle: 'Fidalgo', services: 'Services', blog: 'Blog', contact: 'Contact', socialTitle: 'Follow us',
+        rights: 'All rights reserved.', disclaimer: 'Independent tool; not affiliated with Amazon Web Services.',
+      },
+    },
     documentTitle: 'AWS Fargate Calculator',
     skipToCalculator: 'Skip to calculator',
     header: {
@@ -98,6 +131,39 @@ export const t = {
     },
   },
   pt: {
+    ui: {
+      headerByline: 'por Fidalgo IT Solutions', headerCta: 'Fale com a Fidalgo',
+      calculatorIntroTitle: 'Sobre esta estimativa',
+      calculatorIntroText: 'O AWS Fargate executa contêineres sem exigir a gestão de servidores. Informe região, vCPU, memória, duração e quantidade de tarefas para estimar os custos de processamento no Fargate e Fargate Spot.',
+      stepConfiguration: 'Seu cenário', stepEstimate: 'Seu resultado',
+      infrastructure: 'Infraestrutura', resources: 'Recursos por tarefa', workload: 'Carga de trabalho e duração',
+      totalCaption: 'Custo estimado para o período selecionado', breakdown: 'Composição do custo',
+      pricingCaution: 'Estimativa indicativa; confira os preços atuais da AWS antes de decidir.',
+      education: {
+        eyebrow: 'Entenda a estimativa',
+        title: 'O que compõe o custo do Fargate?',
+        intro: 'Um resumo do serviço, das variáveis deste cálculo e dos custos que ficam fora dele.',
+        source: 'Preços oficiais da AWS',
+        cards: [
+          { title: 'AWS e Fargate', text: 'A AWS oferece infraestrutura em nuvem. O Fargate executa contêineres no ECS ou EKS sem que sua equipe gerencie servidores.' },
+          { title: 'O que a calculadora considera', text: 'A estimativa combina região, vCPU, memória, tempo de execução e quantidade de tarefas para Fargate e Fargate Spot.' },
+          { title: 'Spot e custos adicionais', text: 'O Fargate Spot usa capacidade sujeita a interrupção. Armazenamento extra, tráfego, logs e outros serviços da AWS podem gerar cobranças adicionais.' },
+        ],
+      },
+      prefooter: {
+        eyebrow: 'Fidalgo IT Solutions',
+        title: 'Transforme a estimativa em um plano.',
+        text: 'A Fidalgo atua em engenharia de software, infraestrutura em nuvem e otimização de custos. Vamos entender seu cenário e identificar próximos passos concretos.',
+        cta: 'Converse com a Fidalgo', secondary: 'Conheça nossa atuação',
+      },
+      siteFooter: {
+        tagline: 'Engenharia e consultoria em tecnologia',
+        description: 'Tecnologia orientada aos objetivos do negócio, com clareza técnica para construir, operar e otimizar.',
+        navigationLabel: 'Navegação do rodapé', appTitle: 'Aplicação', calculator: 'Calculadora', awsPrices: 'Preços da AWS', source: 'Código-fonte',
+        companyTitle: 'Fidalgo', services: 'Atuação', blog: 'Blog', contact: 'Contato', socialTitle: 'Acompanhe',
+        rights: 'Todos os direitos reservados.', disclaimer: 'Ferramenta independente, sem afiliação à Amazon Web Services.',
+      },
+    },
     documentTitle: 'AWS Fargate Calculator',
     skipToCalculator: 'Pular para a calculadora',
     header: {
@@ -183,6 +249,39 @@ export const t = {
     },
   },
   es: {
+    ui: {
+      headerByline: 'por Fidalgo IT Solutions', headerCta: 'Habla con Fidalgo',
+      calculatorIntroTitle: 'Sobre esta estimación',
+      calculatorIntroText: 'AWS Fargate ejecuta contenedores sin administrar servidores. Elige región, vCPU, memoria, duración y número de tareas para estimar los costos de procesamiento de Fargate y Fargate Spot.',
+      stepConfiguration: 'Tu escenario', stepEstimate: 'Tu resultado',
+      infrastructure: 'Infraestructura', resources: 'Recursos por tarea', workload: 'Carga de trabajo y duración',
+      totalCaption: 'Costo estimado para el período seleccionado', breakdown: 'Desglose del costo',
+      pricingCaution: 'Estimación orientativa; consulta los precios actuales de AWS antes de decidir.',
+      education: {
+        eyebrow: 'Entiende la estimación',
+        title: '¿Qué compone el costo de Fargate?',
+        intro: 'Un resumen del servicio, las variables de este cálculo y los costos que quedan fuera.',
+        source: 'Precios oficiales de AWS',
+        cards: [
+          { title: 'AWS y Fargate', text: 'AWS ofrece infraestructura en la nube. Fargate ejecuta contenedores en ECS o EKS sin que tu equipo administre servidores.' },
+          { title: 'Qué incluye la calculadora', text: 'La estimación combina región, vCPU, memoria, tiempo de ejecución y número de tareas para Fargate y Fargate Spot.' },
+          { title: 'Spot y cargos adicionales', text: 'Fargate Spot usa capacidad sujeta a interrupciones. Almacenamiento adicional, tráfico, registros y otros servicios de AWS pueden generar cargos extra.' },
+        ],
+      },
+      prefooter: {
+        eyebrow: 'Fidalgo IT Solutions',
+        title: 'Convierte la estimación en un plan.',
+        text: 'Fidalgo trabaja en ingeniería de software, infraestructura en la nube y optimización de costos. Conversemos sobre tu escenario y los próximos pasos.',
+        cta: 'Habla con Fidalgo', secondary: 'Conoce nuestros servicios',
+      },
+      siteFooter: {
+        tagline: 'Ingeniería y consultoría tecnológica',
+        description: 'Tecnología alineada con los objetivos del negocio y claridad técnica para construir, operar y optimizar.',
+        navigationLabel: 'Navegación del pie de página', appTitle: 'Aplicación', calculator: 'Calculadora', awsPrices: 'Precios de AWS', source: 'Código fuente',
+        companyTitle: 'Fidalgo', services: 'Servicios', blog: 'Blog', contact: 'Contacto', socialTitle: 'Síguenos',
+        rights: 'Todos los derechos reservados.', disclaimer: 'Herramienta independiente, sin afiliación con Amazon Web Services.',
+      },
+    },
     documentTitle: 'AWS Fargate Calculator',
     skipToCalculator: 'Saltar al calculador',
     header: {

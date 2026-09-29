@@ -1,5 +1,20 @@
 import React from 'react';
-import SearchSelectInput from './SearchSelectInput';
+import ComboSelect from '../ComboSelect';
+
+const CURRENCY_EMOJIS = {
+  USD: '🇺🇸',
+  EUR: '🇪🇺',
+  GBP: '🇬🇧',
+  JPY: '🇯🇵',
+  AUD: '🇦🇺',
+  CAD: '🇨🇦',
+  CHF: '🇨🇭',
+  CNY: '🇨🇳',
+  BRL: '🇧🇷',
+  INR: '🇮🇳',
+  MXN: '🇲🇽',
+  ZAR: '🇿🇦',
+};
 
 function getCurrencyName(code, locale = 'en') {
   try {
@@ -9,47 +24,35 @@ function getCurrencyName(code, locale = 'en') {
   }
 }
 
-export default function CurrencyInput({
-    value,
-    onChange,
-    currencyList,
-    t,
-    locale = 'en',
-    buttonWidthClass = 'min-w-[72px]',
-    buttonHeightClass = 'h-8',
-    buttonTextClass = 'text-[11px]',
-    buttonPaddingClass = 'px-2',
-}) {
-    const options = currencyList.map((currency) => ({
-      value: currency,
-      code: currency,
-      name: getCurrencyName(currency, locale),
-      label: `${currency} - ${getCurrencyName(currency)}`,
-    }));
+function CurrencyLabel({ currency, compact = false }) {
+  return (
+    <span className="currency-option">
+      <span className="currency-emoji" aria-hidden="true">{CURRENCY_EMOJIS[currency.code] || '💱'}</span>
+      <span className="currency-option-name">
+        {compact ? currency.code : `${currency.code} · ${currency.name}`}
+      </span>
+    </span>
+  );
+}
 
-    const displayName = (currencyCode) => getCurrencyName(currencyCode, locale);
+export default function CurrencyInput({ id, value, onChange, currencyList, t, locale = 'en' }) {
+  const options = currencyList.map((code) => {
+    const name = getCurrencyName(code, locale);
+    return { value: code, label: `${code} · ${name}`, searchText: `${code} ${name}`, code, name };
+  });
 
-    return (
-        <SearchSelectInput
-            label={t?.selectors?.currencyLabel || 'Currency'}
-            value={value}
-            onChange={onChange}
-            placeholder={t?.selectors?.currencyPlaceholder || 'Search currency...'}
-            options={options}
-            getOptionValue={(currency) => currency.value}
-            getOptionLabel={(currency) => `${currency.value} - ${displayName(currency.code)}`}
-            getOptionDisplayLabel={(currency) => currency.code}
-            showCaret={false}
-            buttonClassName="justify-center"
-            getOptionSearchText={(currency) => `${currency.code} ${displayName(currency.code)}`}
-            buttonWidthClass={buttonWidthClass}
-            buttonHeightClass={buttonHeightClass}
-            buttonTextClass={buttonTextClass}
-            buttonPaddingClass={buttonPaddingClass}
-            openButtonPrefix={t?.selectors?.openSelector || 'Open'}
-            closeButtonLabel={t?.selectors?.closeSelector || 'Close selector'}
-            noResultsText={t?.selectors?.noResults || 'No results.'}
-            resultHintTemplate={t?.selectors?.resultHint || '{count} options available. Use arrow keys and Enter to select.'}
-        />
-    );
+  return (
+    <ComboSelect
+      id={id}
+      value={value}
+      onChange={onChange}
+      options={options}
+      ariaLabel={t?.selectors?.currencyLabel || 'Currency'}
+      searchable
+      searchPlaceholder={t?.selectors?.currencyPlaceholder || 'Search currency...'}
+      noResultsText={t?.selectors?.noResults || 'No results.'}
+      renderValue={(currency) => <CurrencyLabel currency={currency} compact />}
+      renderOption={(currency) => <CurrencyLabel currency={currency} />}
+    />
+  );
 }

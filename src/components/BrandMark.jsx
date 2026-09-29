@@ -1,0 +1,11 @@
+import React from 'react';
+
+export default function BrandMark({ className = '' }) {
+  return (
+    <svg className={className} viewBox="0 0 128 128" fill="currentColor" aria-hidden="true">
+      <path d="M49 28H27Q25 28 23.6 29.4L13.4 39.6Q12 41 12 43V85Q12 87 13.4 88.4L23.6 98.6Q25 100 27 100H49V82H34Q30 82 30 78V50Q30 46 34 46H49Z" />
+      <path d="M49 28H27Q25 28 23.6 29.4L13.4 39.6Q12 41 12 43V85Q12 87 13.4 88.4L23.6 98.6Q25 100 27 100H49V82H34Q30 82 30 78V50Q30 46 34 46H49Z" transform="translate(128 0) scale(-1 1)" />
+      <path d="M59 16H69Q73 16 73 20V108Q73 112 69 112H59Q55 112 55 108V20Q55 16 59 16Z" />
+    </svg>
+  );
+}

@@ -1,21 +1,8 @@
 import React from 'react';
+import ComboSelect from './ComboSelect';
 
-const values = [0.25, 0.5, 1, 2, 4];
+const options = [0.25, 0.5, 1, 2, 4].map((value) => ({ value, label: `${value} vCPU` }));
 
 export default function CPUInput({ value, onChange, id, ariaLabel = 'CPU value' }) {
-    return (
-        <select
-            id={id}
-            className="w-full bg-[var(--aws-surface)] border border-[var(--aws-border)] text-[var(--aws-ink)] text-base sm:text-sm rounded-sm px-2 py-2 focus:outline-none focus:ring-1 focus:ring-[var(--aws-accent)]"
-            value={value}
-            aria-label={ariaLabel}
-            onChange={(e) => onChange(Number(e.target.value))}
-        >
-            {values.map((v) => (
-                <option key={v} value={v}>
-                    {v} vCPU
-                </option>
-            ))}
-        </select>
-    );
+  return <ComboSelect id={id} value={value} onChange={onChange} options={options} ariaLabel={ariaLabel} />;
 }

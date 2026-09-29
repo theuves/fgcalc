@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import ComboSelect from './ComboSelect';
 
 function getRange(start, end) {
     return Array(end - start + 1)
@@ -21,21 +22,7 @@ function getValues(currentCPU) {
 }
 
 export default function RAMInput({ cpu, value, onChange, id, ariaLabel = 'Memory value in GiB' }) {
-    const values = useMemo(() => getValues(String(cpu)), [cpu]);
+    const options = useMemo(() => getValues(String(cpu)).map((amount) => ({ value: amount, label: `${amount} GiB` })), [cpu]);
 
-    return (
-        <select
-            id={id}
-            className="w-full bg-[var(--aws-surface)] border border-[var(--aws-border)] text-[var(--aws-ink)] text-base sm:text-sm rounded-sm px-2 py-2 focus:outline-none focus:ring-1 focus:ring-[var(--aws-accent)]"
-            value={value}
-            aria-label={ariaLabel}
-            onChange={(e) => onChange(Number(e.target.value))}
-        >
-            {values.map((v) => (
-                <option key={v} value={v}>
-                    {v} GiB
-                </option>
-            ))}
-        </select>
-    );
+    return <ComboSelect id={id} value={value} onChange={onChange} options={options} ariaLabel={ariaLabel} />;
 }
