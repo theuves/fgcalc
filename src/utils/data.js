@@ -1,3 +1,6 @@
+// USD per vCPU-hour and GB-hour for AWS Fargate on Linux/x86.
+// On-demand: AWS AmazonECS Price List Bulk API, verified 2026-09-29.
+// Fargate Spot: AWS pricing page feed, retrieved 2026-09-29 21:41 UTC; rates can change.
 export default [
     {
         "region": "ca-central-1",
@@ -22,8 +25,8 @@ export default [
                 "ram": 0.004445
             },
             "FARGATE_SPOT": {
-                "cpu": 0.01257825,
-                "ram": 0.00138118
+                "cpu": 0.01225536,
+                "ram": 0.00134573
             },
         }
     },
@@ -36,8 +39,8 @@ export default [
                 "ram": 0.00511
             },
             "FARGATE_SPOT": {
-                "cpu": 0.013968,
-                "ram": 0.001533
+                "cpu": 0.01468459,
+                "ram": 0.00161165
             },
         }
     },
@@ -50,8 +53,8 @@ export default [
                 "ram": 0.0076
             },
             "FARGATE_SPOT": {
-                "cpu": 0.0212609,
-                "ram": 0.00232159
+                "cpu": 0.02199254,
+                "ram": 0.00240148
             },
         }
     },
@@ -64,8 +67,8 @@ export default [
                 "ram": 0.00511
             },
             "FARGATE_SPOT": {
-                "cpu": 0.01422902,
-                "ram": 0.00156165
+                "cpu": 0.013968,
+                "ram": 0.001533
             },
         }
     },
@@ -92,8 +95,8 @@ export default [
                 "ram": 0.0053
             },
             "FARGATE_SPOT": {
-                "cpu": 0.01458,
-                "ram": 0.00159
+                "cpu": 0.01464299,
+                "ram": 0.00159687
             },
         }
     },
@@ -106,8 +109,8 @@ export default [
                 "ram": 0.004445
             },
             "FARGATE_SPOT": {
-                "cpu": 0.01269464,
-                "ram": 0.00139396
+                "cpu": 0.01258905,
+                "ram": 0.00138237
             },
         }
     },
@@ -120,8 +123,8 @@ export default [
                 "ram": 0.00532
             },
             "FARGATE_SPOT": {
-                "cpu": 0.014568,
-                "ram": 0.001596
+                "cpu": 0.01520795,
+                "ram": 0.00166611
             },
         }
     },
@@ -134,8 +137,8 @@ export default [
                 "ram": 0.00553
             },
             "FARGATE_SPOT": {
-                "cpu": 0.01981009,
-                "ram": 0.00216673
+                "cpu": 0.01563522,
+                "ram": 0.0017101
             },
         }
     },
@@ -176,8 +179,8 @@ export default [
                 "ram": 0.0049
             },
             "FARGATE_SPOT": {
-                "cpu": 0.01335,
-                "ram": 0.00147
+                "cpu": 0.01342378,
+                "ram": 0.00147812
             },
         }
     },
@@ -190,8 +193,8 @@ export default [
                 "ram": 0.00511
             },
             "FARGATE_SPOT": {
-                "cpu": 0.013968,
-                "ram": 0.001533
+                "cpu": 0.01437645,
+                "ram": 0.00157783
             },
         }
     },
@@ -204,8 +207,8 @@ export default [
                 "ram": 0.004655
             },
             "FARGATE_SPOT": {
-                "cpu": 0.0133282,
-                "ram": 0.00145777
+                "cpu": 0.01344511,
+                "ram": 0.00147056
             },
         }
     },
@@ -218,8 +221,8 @@ export default [
                 "ram": 0.004445
             },
             "FARGATE_SPOT": {
-                "cpu": 0.01276353,
-                "ram": 0.00140153
+                "cpu": 0.01539807,
+                "ram": 0.00169082
             },
         }
     },
@@ -260,8 +263,8 @@ export default [
                 "ram": 0.00553
             },
             "FARGATE_SPOT": {
-                "cpu": 0.015168,
-                "ram": 0.001659
+                "cpu": 0.01544659,
+                "ram": 0.00168947
             },
         }
     },
@@ -274,8 +277,8 @@ export default [
                 "ram": 0.00511
             },
             "FARGATE_SPOT": {
-                "cpu": 0.0140458,
-                "ram": 0.00154154
+                "cpu": 0.01441236,
+                "ram": 0.00158177
             },
         }
     },
@@ -288,8 +291,8 @@ export default [
                 "ram": 0.004445
             },
             "FARGATE_SPOT": {
-                "cpu": 0.01264355,
-                "ram": 0.00138835
+                "cpu": 0.01288561,
+                "ram": 0.00141493
             },
         }
     },
@@ -302,8 +305,8 @@ export default [
                 "ram": 0.0058
             },
             "FARGATE_SPOT": {
-                "cpu": 0.01578,
-                "ram": 0.00174
+                "cpu": 0.0162103,
+                "ram": 0.00178745
             },
         }
     }

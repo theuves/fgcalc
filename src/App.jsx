@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useId } from 'react';
+import React, { useState, useEffect, useMemo, useId, useRef } from 'react';
 import Header from './components/Header/Header';
 import BrandMark from './components/BrandMark';
 import ArrowUpRight from './components/ArrowUpRight';
@@ -9,31 +9,47 @@ import CPUInput from './components/CPUInput';
 import RAMInput from './components/RAMInput';
 import CapacityInput from './components/CapacityInput';
 import Table from './components/Table';
+import ShareEstimate from './components/ShareEstimate';
 import createPriceGetter from './utils/createPriceGetter';
 import formatPrice from './utils/formatPrice';
 import getExchangeRates from './utils/getExchangeRates';
 import { POPULAR_CURRENCIES } from './utils/currencies';
+import { buildShareUrl, isShareableEstimate, readSharedEstimate, SHARE_QUERY_KEYS } from './utils/shareEstimate';
 import { t as localeStrings, getLocaleFromPath, SUPPORTED_LOCALES } from './utils/i18n';
 
 function App() {
-  const [region, setRegion] = useState('us-east-1');
-  const [currency, setCurrency] = useState('USD');
+  const [initialEstimate] = useState(() => readSharedEstimate(window.location.search));
+  const [region, setRegion] = useState(initialEstimate.region);
+  const [currency, setCurrency] = useState(initialEstimate.currency);
   const [locale, setLocale] = useState(() => getLocaleFromPath(window.location.pathname));
-  const [cpu, setCpu] = useState(1);
-  const [ram, setRam] = useState(2);
+  const [cpu, setCpu] = useState(initialEstimate.cpu);
+  const [ram, setRam] = useState(initialEstimate.ram);
   const handleCpuChange = (nextCpu) => {
     setCpu(nextCpu);
     const minimum = nextCpu === 0.25 ? 0.5 : nextCpu === 0.5 ? 1 : nextCpu * 2;
     const maximum = nextCpu === 0.25 ? 2 : nextCpu === 0.5 ? 4 : nextCpu === 4 ? 30 : nextCpu * 8;
     setRam((current) => Math.min(maximum, Math.max(minimum, current)));
   };
-  const [timeValue, setTimeValue] = useState(1);
-  const [timeType, setTimeType] = useState('month');
-  const [capacityFargate, setCapacityFargate] = useState(1);
-  const [capacityFargateSpot, setCapacityFargateSpot] = useState(0);
+  const [timeValue, setTimeValue] = useState(initialEstimate.timeValue);
+  const [timeType, setTimeType] = useState(initialEstimate.timeType);
+  const [capacityFargate, setCapacityFargate] = useState(initialEstimate.capacityFargate);
+  const [capacityFargateSpot, setCapacityFargateSpot] = useState(initialEstimate.capacityFargateSpot);
+  const isSharedSession = useRef(SHARE_QUERY_KEYS.some((key) => new URLSearchParams(window.location.search).has(key)));
   const [currencyRates, setCurrencyRates] = useState({ USD: 1 });
   const [isLoadingRates, setIsLoadingRates] = useState(true);
   const messages = useMemo(() => localeStrings[SUPPORTED_LOCALES.includes(locale) ? locale : 'pt'], [locale]);
+
+  useEffect(() => {
+    if (!isSharedSession.current) return;
+    const estimate = { region, currency, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot };
+    if (isShareableEstimate(estimate)) {
+      window.history.replaceState({}, '', buildShareUrl(window.location.href, locale, estimate));
+    } else {
+      const url = new URL(window.location.href);
+      SHARE_QUERY_KEYS.forEach((key) => url.searchParams.delete(key));
+      window.history.replaceState({}, '', url);
+    }
+  }, [region, currency, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot, locale]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -48,7 +64,9 @@ function App() {
 
   const changeLocale = (nextLocale) => {
     if (!SUPPORTED_LOCALES.includes(nextLocale) || nextLocale === locale) return;
-    window.history.pushState({}, '', `/${nextLocale}`);
+    const url = new URL(window.location.href);
+    url.pathname = `/${nextLocale}`;
+    window.history.pushState({}, '', url);
     setLocale(nextLocale);
   };
 
@@ -71,13 +89,14 @@ function App() {
 
   const prices = useMemo(() => {
     if ([capacityFargate, capacityFargateSpot, timeValue, cpu, ram].some((value) => !Number.isFinite(value))
-      || capacityFargate < 0 || capacityFargateSpot < 0 || timeValue < 1) {
+      || capacityFargate < 0 || capacityFargateSpot < 0 || timeValue < 1
+      || !Number.isFinite(currencyRates[currency]) || currencyRates[currency] <= 0) {
       return null;
     }
     const getPrices = createPriceGetter({
       region,
       time: { value: timeValue, type: timeType },
-      exchangeRate: currencyRates[currency] || 1,
+      exchangeRate: currencyRates[currency],
       cpu,
       ram,
     });
@@ -88,8 +107,8 @@ function App() {
 
   const availableCurrencies = useMemo(() => {
     const allCurrencies = Object.keys(currencyRates);
-    return POPULAR_CURRENCIES.slice(0, 10).filter((code) => allCurrencies.includes(code));
-  }, [currencyRates]);
+    return POPULAR_CURRENCIES.slice(0, 10).filter((code) => code === currency || allCurrencies.includes(code));
+  }, [currencyRates, currency]);
 
   const timeValueId = useId();
   const timeTypeId = useId();
@@ -134,6 +153,7 @@ function App() {
                 <div className="field"><label className="field-label" htmlFor={currencyId}>{messages.selectors.currencyLabel}</label><CurrencyInput id={currencyId} value={currency} onChange={setCurrency} currencyList={availableCurrencies} t={messages} locale={locale} /></div>
               </div>
               {isLoadingRates && <p className="field-note" role="status">{messages.header.updatingRates}</p>}
+              {!isLoadingRates && (!Number.isFinite(currencyRates[currency]) || currencyRates[currency] <= 0) && <p className="field-note" role="status">{messages.header.ratesUnavailable}</p>}
             </div>
 
             <div className="field-group">
@@ -149,17 +169,23 @@ function App() {
               <div className="field"><label className="field-label" htmlFor={timeValueId}>{messages.sections.timePeriod}</label><TimeInput valueInputId={timeValueId} typeInputId={timeTypeId} value={timeValue} type={timeType} onValueChange={setTimeValue} onTypeChange={setTimeType} valueAriaLabel={messages.sections.timeInputValueAria} typeAriaLabel={messages.sections.timeInputUnitAria} helperText={messages.sections.timeInputHelp} timeUnits={messages.sections.timeUnits} /></div>
               <div className="field-grid field-grid-two task-fields">
                 <div className="field"><label className="field-label" htmlFor={fargateTasksId}>{messages.sections.fargateTasks}</label><CapacityInput ariaLabel={messages.sections.fargateTasksAria} id={fargateTasksId} value={capacityFargate} onChange={setCapacityFargate} /></div>
-                <div className="field"><label className="field-label" htmlFor={fargateSpotTasksId}>{messages.sections.fargateSpotTasks}</label><CapacityInput ariaLabel={messages.sections.fargateSpotTasksAria} id={fargateSpotTasksId} value={capacityFargateSpot} onChange={setCapacityFargateSpot} /></div>
+                <div className="field"><label className="field-label" htmlFor={fargateSpotTasksId}>{messages.sections.fargateSpotTasks}</label><CapacityInput ariaLabel={messages.sections.fargateSpotTasksAria} id={fargateSpotTasksId} value={capacityFargateSpot} onChange={setCapacityFargateSpot} /><p className="field-note">{messages.sections.fargateSpotScope}</p></div>
               </div>
             </div>
           </section>
 
           <section className="calculator-results" aria-labelledby="result-title">
-            <div className="panel-heading">
+            <div className="panel-heading results-heading">
               <div className="panel-heading-copy">
                 <span className="panel-step">02 / {ui.stepEstimate}</span>
                 <h2 id="result-title">{messages.sections.estimatedCost}</h2>
               </div>
+              <ShareEstimate
+                estimate={{ region, currency, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot }}
+                locale={locale}
+                total={prices ? formatPrice(prices.total, currency, locale) : '—'}
+                messages={messages}
+              />
             </div>
             <div className="total-card">
               <svg className="total-chart" viewBox="0 0 520 220" preserveAspectRatio="none" aria-hidden="true" focusable="false">
@@ -183,8 +209,8 @@ function App() {
             </div>
             <div className="breakdown-heading"><h3>{ui.breakdown}</h3><span>{currency}</span></div>
             <div className="breakdown-stack">
-              <Table name={messages.sections.table.fargate} currency={currency} locale={locale} cpu={prices?.fargatePrice.cpu || 0} ram={prices?.fargatePrice.ram || 0} total={prices?.fargatePrice.total || 0} cpuLabel={messages.sections.table.vcpuLabel} ramLabel={messages.sections.table.gibsLabel} />
-              <Table name={messages.sections.table.fargateSpot} currency={currency} locale={locale} cpu={prices?.fargateSpotPrice.cpu || 0} ram={prices?.fargateSpotPrice.ram || 0} total={prices?.fargateSpotPrice.total || 0} cpuLabel={messages.sections.table.vcpuLabel} ramLabel={messages.sections.table.gibsLabel} />
+              <Table name={messages.sections.table.fargate} currency={currency} locale={locale} cpu={prices?.fargatePrice.cpu} ram={prices?.fargatePrice.ram} total={prices?.fargatePrice.total} cpuLabel={messages.sections.table.vcpuLabel} ramLabel={messages.sections.table.gibsLabel} />
+              <Table name={messages.sections.table.fargateSpot} currency={currency} locale={locale} cpu={prices?.fargateSpotPrice.cpu} ram={prices?.fargateSpotPrice.ram} total={prices?.fargateSpotPrice.total} cpuLabel={messages.sections.table.vcpuLabel} ramLabel={messages.sections.table.gibsLabel} />
             </div>
             <div className="pricing-note"><span aria-hidden="true">ⓘ</span><p>{messages.sections.pricingUpdate} {ui.pricingCaution}</p></div>
           </section>
@@ -262,7 +288,11 @@ function App() {
         <div className="footer-bottom">
           <div className="footer-bottom-inner">
             <span>© 2026 Fidalgo IT Solutions. {ui.siteFooter.rights}</span>
-            <span>Fidalgo Tecnologia da Informacao LTDA · Belo Horizonte - MG · CNPJ 49.627.083/0001-32</span>
+            <div className="footer-legal">
+              <span>Fidalgo Tecnologia da Informacao LTDA</span>
+              <span>Belo Horizonte - MG</span>
+              <span>CNPJ 49.627.083/0001-32</span>
+            </div>
           </div>
           <p>{ui.siteFooter.disclaimer}</p>
         </div>
