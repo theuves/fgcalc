@@ -17,11 +17,16 @@ import { POPULAR_CURRENCIES } from './utils/currencies';
 import { buildShareUrl, isShareableEstimate, readSharedEstimate, SHARE_QUERY_KEYS } from './utils/shareEstimate';
 import { t as localeStrings, getLocaleFromPath, SUPPORTED_LOCALES } from './utils/i18n';
 
+const getCurrentLocale = () => getLocaleFromPath(
+  window.location.pathname,
+  navigator.languages?.length ? navigator.languages : [navigator.language]
+);
+
 function App() {
   const [initialEstimate] = useState(() => readSharedEstimate(window.location.search));
   const [region, setRegion] = useState(initialEstimate.region);
   const [currency, setCurrency] = useState(initialEstimate.currency);
-  const [locale, setLocale] = useState(() => getLocaleFromPath(window.location.pathname));
+  const [locale, setLocale] = useState(getCurrentLocale);
   const [cpu, setCpu] = useState(initialEstimate.cpu);
   const [ram, setRam] = useState(initialEstimate.ram);
   const handleCpuChange = (nextCpu) => {
@@ -54,10 +59,15 @@ function App() {
   useEffect(() => {
     document.documentElement.lang = locale;
     document.title = messages.documentTitle;
+    if (window.location.pathname === '/') {
+      const url = new URL(window.location.href);
+      url.pathname = `/${locale}`;
+      window.history.replaceState(window.history.state, '', url);
+    }
   }, [locale, messages]);
 
   useEffect(() => {
-    const onPopState = () => setLocale(getLocaleFromPath(window.location.pathname));
+    const onPopState = () => setLocale(getCurrentLocale());
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);

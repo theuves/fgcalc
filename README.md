@@ -25,6 +25,8 @@ npm run dev
 
 ## How to use
 
+The home URL selects Portuguese, English, or Spanish from the browser language preferences. An explicit `/pt`, `/en`, or `/es` URL takes precedence, and the language selector lets visitors change it.
+
 1. Set region and currency.
 2. Configure time, CPU, memory, Fargate tasks, and Fargate Spot tasks.
 3. Read total estimate and breakdown instantly.

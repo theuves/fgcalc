@@ -6,9 +6,17 @@ export const LOCALE_LABELS = {
   es: 'Español',
 };
 
-export const getLocaleFromPath = (path) => {
+export const getLocaleFromPath = (path, preferredLanguages = []) => {
   const firstSegment = path?.replace(/\/$/, '').split('/').filter(Boolean)[0] || '';
-  return SUPPORTED_LOCALES.includes(firstSegment) ? firstSegment : 'pt';
+  if (SUPPORTED_LOCALES.includes(firstSegment)) return firstSegment;
+
+  const languages = Array.isArray(preferredLanguages) ? preferredLanguages : [preferredLanguages];
+  for (const language of languages) {
+    const code = typeof language === 'string' ? language.toLowerCase().split(/[-_]/)[0] : '';
+    if (SUPPORTED_LOCALES.includes(code)) return code;
+  }
+
+  return 'pt';
 };
 
 export const t = {
