@@ -39,6 +39,30 @@ The home URL selects Portuguese, English, or Spanish from the browser language p
 - The estimate covers vCPU and memory only. Additional storage, data transfer, logs, and other services can add charges. A month is modeled as 730 hours and a year as 8,760 hours.
 - Exchange rates are pulled from `open.er-api.com` at runtime (`src/utils/getExchangeRates.js`).
 
+## SEO and production build
+
+`npm run build` generates the interactive client plus complete, prerendered HTML for `/pt`, `/en`, and `/es`. Content, headings, guide, and FAQ are readable without JavaScript; React hydrates the calculator in the browser. Shared estimate URLs restore their parameters with a fresh client render.
+
+- Each language has a translated title, description, canonical URL, reciprocal `hreflang` links, Open Graph tags, and Twitter card. Query parameters canonicalize to the clean language URL.
+- Structured data describes the publisher, website, free web application, and visible FAQ. FAQ markup does not guarantee a Google rich result.
+- `dist/robots.txt` and `dist/sitemap.xml` are generated from the same production origin. The sitemap contains the three canonical language pages; `/` serves Portuguese HTML canonicalized to `/pt` and selects the browser language after hydration.
+- Vercel serves each language's static HTML and returns a real 404 for unknown routes. `npm run preview` uses the same language paths and a 404 page locally.
+- Social images are localized 1200 × 630 PNGs in `public/`. Editable SVG sources live in `assets/social/`; regenerate them with `node scripts/social-images.mjs`, then export each SVG as its corresponding `public/og-{locale}.png` at its original dimensions.
+- Language flags are served locally from `public/flags/` (original assets from FlagCDN).
+
+The default production origin is `https://fargate.fidalgoitsolutions.com.br`. To change it, set `VITE_SITE_URL` before building (see `.env.example`). Use an absolute origin with no subdirectory or query. Deploy the generated `dist/` directory; running `vite build` directly skips prerendering and sitemap generation. Vercel's build command is explicitly configured to use `npm run build`.
+
+Validate changes with:
+
+```bash
+npm run build
+npm run test:seo
+npm run lint
+npm run preview
+```
+
+After publishing, submit `/sitemap.xml` in Google Search Console and inspect `/pt`, `/en`, and `/es` to verify indexing. Search Console ownership verification requires the domain owner's account; this repository does not add a fabricated verification token. Rankings and rich results depend on search engines and are not guaranteed by these changes.
+
 ## Data and brand note
 
 This project is independent and not affiliated with Amazon, AWS, or any brand names used for context.

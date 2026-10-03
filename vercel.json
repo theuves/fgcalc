@@ -1,8 +1,10 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "trailingSlash": false,
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/pt", "destination": "/pt/index.html" },
+    { "source": "/en", "destination": "/en/index.html" },
+    { "source": "/es", "destination": "/es/index.html" }
   ]
 }

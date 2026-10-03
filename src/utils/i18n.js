@@ -1,3 +1,5 @@
+import { SEO_CONTENT } from './seoContent.js';
+
 export const SUPPORTED_LOCALES = ['en', 'pt', 'es'];
 
 export const LOCALE_LABELS = {
@@ -61,7 +63,7 @@ export const t = {
         rights: 'All rights reserved.', disclaimer: 'Independent tool; not affiliated with Amazon Web Services.',
       },
     },
-    documentTitle: 'AWS Fargate Calculator',
+    documentTitle: SEO_CONTENT.en.title,
     skipToCalculator: 'Skip to calculator',
     header: {
       titleMain: 'Calculator',
@@ -188,7 +190,7 @@ export const t = {
         rights: 'Todos os direitos reservados.', disclaimer: 'Ferramenta independente, sem afiliação à Amazon Web Services.',
       },
     },
-    documentTitle: 'AWS Fargate Calculator',
+    documentTitle: SEO_CONTENT.pt.title,
     skipToCalculator: 'Pular para a calculadora',
     header: {
       titleMain: 'Calculadora',
@@ -315,7 +317,7 @@ export const t = {
         rights: 'Todos los derechos reservados.', disclaimer: 'Herramienta independiente, sin afiliación con Amazon Web Services.',
       },
     },
-    documentTitle: 'AWS Fargate Calculator',
+    documentTitle: SEO_CONTENT.es.title,
     skipToCalculator: 'Saltar al calculador',
     header: {
       titleMain: 'Calculadora',

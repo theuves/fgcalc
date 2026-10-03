@@ -10,23 +10,25 @@ import RAMInput from './components/RAMInput';
 import CapacityInput from './components/CapacityInput';
 import Table from './components/Table';
 import ShareEstimate from './components/ShareEstimate';
+import PricingGuide from './components/PricingGuide';
 import createPriceGetter from './utils/createPriceGetter';
 import formatPrice from './utils/formatPrice';
 import getExchangeRates from './utils/getExchangeRates';
 import { POPULAR_CURRENCIES } from './utils/currencies';
 import { buildShareUrl, isShareableEstimate, readSharedEstimate, SHARE_QUERY_KEYS } from './utils/shareEstimate';
 import { t as localeStrings, getLocaleFromPath, SUPPORTED_LOCALES } from './utils/i18n';
+import { updateSeo } from './utils/seo';
 
 const getCurrentLocale = () => getLocaleFromPath(
   window.location.pathname,
   navigator.languages?.length ? navigator.languages : [navigator.language]
 );
 
-function App() {
-  const [initialEstimate] = useState(() => readSharedEstimate(window.location.search));
+function App({ initialLocale = 'pt', initialSearch = '' }) {
+  const [initialEstimate] = useState(() => readSharedEstimate(initialSearch));
   const [region, setRegion] = useState(initialEstimate.region);
   const [currency, setCurrency] = useState(initialEstimate.currency);
-  const [locale, setLocale] = useState(getCurrentLocale);
+  const [locale, setLocale] = useState(initialLocale);
   const [cpu, setCpu] = useState(initialEstimate.cpu);
   const [ram, setRam] = useState(initialEstimate.ram);
   const handleCpuChange = (nextCpu) => {
@@ -39,7 +41,7 @@ function App() {
   const [timeType, setTimeType] = useState(initialEstimate.timeType);
   const [capacityFargate, setCapacityFargate] = useState(initialEstimate.capacityFargate);
   const [capacityFargateSpot, setCapacityFargateSpot] = useState(initialEstimate.capacityFargateSpot);
-  const isSharedSession = useRef(SHARE_QUERY_KEYS.some((key) => new URLSearchParams(window.location.search).has(key)));
+  const isSharedSession = useRef(SHARE_QUERY_KEYS.some((key) => new URLSearchParams(initialSearch).has(key)));
   const [currencyRates, setCurrencyRates] = useState({ USD: 1 });
   const [isLoadingRates, setIsLoadingRates] = useState(true);
   const messages = useMemo(() => localeStrings[SUPPORTED_LOCALES.includes(locale) ? locale : 'pt'], [locale]);
@@ -57,14 +59,19 @@ function App() {
   }, [region, currency, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot, locale]);
 
   useEffect(() => {
-    document.documentElement.lang = locale;
-    document.title = messages.documentTitle;
+    updateSeo(locale);
+  }, [locale]);
+
+  useEffect(() => {
     if (window.location.pathname === '/') {
+      const preferredLocale = getCurrentLocale();
       const url = new URL(window.location.href);
-      url.pathname = `/${locale}`;
+      url.pathname = `/${preferredLocale}`;
       window.history.replaceState(window.history.state, '', url);
+      // The static root is Portuguese; browser preferences apply after hydration.
+      setLocale(preferredLocale);
     }
-  }, [locale, messages]);
+  }, []);
 
   useEffect(() => {
     const onPopState = () => setLocale(getCurrentLocale());
@@ -247,6 +254,7 @@ function App() {
             ))}
           </div>
         </section>
+        <PricingGuide locale={locale} awsPricingUrl={awsPricingUrl} />
       </main>
 
       <section className="company-cta" aria-labelledby="company-cta-title">
@@ -278,6 +286,8 @@ function App() {
             <div className="footer-column">
               <h3>{ui.siteFooter.appTitle}</h3>
               <a href="#calculator">{ui.siteFooter.calculator}</a>
+              <a href="#pricing-guide">{locale === 'pt' ? 'Como calcular' : locale === 'es' ? 'Cómo calcular' : 'How to calculate'}</a>
+              <a href="#faq">{locale === 'pt' ? 'Perguntas frequentes' : locale === 'es' ? 'Preguntas frecuentes' : 'Frequently asked questions'}</a>
               <a href={awsPricingUrl} target="_blank" rel="noopener noreferrer">{ui.siteFooter.awsPrices}</a>
               <a href="https://github.com/theuves/fgcalc" target="_blank" rel="noopener noreferrer">{ui.siteFooter.source}</a>
             </div>

@@ -2,11 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import { LOCALE_LABELS } from '../../utils/i18n';
 import BrandMark from '../BrandMark';
 import ArrowUpRight from '../ArrowUpRight';
+import { SEO_CONTENT } from '../../utils/seoContent';
 
 const FLAG_IMAGES = {
-  pt: 'https://flagcdn.com/br.svg',
-  en: 'https://flagcdn.com/us.svg',
-  es: 'https://flagcdn.com/es.svg',
+  pt: '/flags/br.svg',
+  en: '/flags/us.svg',
+  es: '/flags/es.svg',
 };
 
 function LanguageSelector({ locale, label, onLocaleChange }) {
@@ -30,7 +31,10 @@ function LanguageSelector({ locale, label, onLocaleChange }) {
     };
   }, []);
 
-  const selectLocale = (code) => {
+  const selectLocale = (event, code) => {
+    // Keep ordinary links crawlable and support opening a language in a new tab.
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
     if (menuRef.current) menuRef.current.open = false;
     onLocaleChange(code);
   };
@@ -45,11 +49,11 @@ function LanguageSelector({ locale, label, onLocaleChange }) {
       </summary>
       <div className="language-options" role="group" aria-label={label}>
         {Object.entries(LOCALE_LABELS).map(([code, name]) => (
-          <button className={`language-option${locale === code ? ' is-current' : ''}`} type="button" key={code} lang={code} aria-current={locale === code ? 'true' : undefined} onClick={() => selectLocale(code)}>
+          <a className={`language-option${locale === code ? ' is-current' : ''}`} href={`/${code}`} hrefLang={code} key={code} lang={code} aria-current={locale === code ? 'page' : undefined} onClick={(event) => selectLocale(event, code)}>
             <img className="language-flag" src={FLAG_IMAGES[code]} alt="" width="24" height="18" loading="lazy" />
             <span>{name}</span>
             <span className="language-option-code">{code.toUpperCase()}</span>
-          </button>
+          </a>
         ))}
       </div>
     </details>
@@ -61,9 +65,9 @@ export default function Header({ locale, t, onLocaleChange }) {
     <header className="app-header">
       <div className="app-header-inner">
         <div className="header-identity">
-          <a className="brand-mark-link" href={`/${locale}`} aria-label="AWS Fargate Calculator"><BrandMark className="brand-mark" /></a>
+          <a className="brand-mark-link" href={`/${locale}`} aria-label={SEO_CONTENT[locale].heading}><BrandMark className="brand-mark" /></a>
           <div className="brand-copy">
-            <a className="brand-title-link" href={`/${locale}`}><h1 className="brand-title">AWS Fargate Calculator</h1></a>
+            <a className="brand-title-link" href={`/${locale}`}><h1 className="brand-title">{SEO_CONTENT[locale].heading}</h1></a>
             <a className="brand-byline" href={`https://www.fidalgoitsolutions.com.br/${locale === 'pt' ? 'pt' : 'en'}`} target="_blank" rel="noopener noreferrer">{t.ui.headerByline}</a>
           </div>
         </div>

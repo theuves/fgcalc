@@ -33,7 +33,7 @@ export default function ShareEstimate({ estimate, locale, total, messages }) {
   const descriptionId = useId();
   const share = messages.ui.share;
   const canShare = isShareableEstimate(estimate);
-  const url = canShare ? buildShareUrl(window.location.href, locale, estimate) : '';
+  const url = canShare && typeof window !== 'undefined' ? buildShareUrl(window.location.href, locale, estimate) : '';
 
   useEffect(() => {
     if (!isOpen) return undefined;
