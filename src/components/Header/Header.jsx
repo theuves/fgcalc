@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { LOCALE_LABELS } from '../../utils/i18n';
+import { LOCALE_LABELS } from '../../utils/locales';
 import BrandMark from '../BrandMark';
 import ArrowUpRight from '../ArrowUpRight';
-import { SEO_CONTENT } from '../../utils/seoContent';
 
 const FLAG_IMAGES = {
   pt: '/flags/br.svg',
@@ -41,7 +40,7 @@ function LanguageSelector({ locale, label, onLocaleChange }) {
 
   return (
     <details className="language-menu" ref={menuRef}>
-      <summary className="language-trigger" aria-label={`${label}: ${LOCALE_LABELS[locale]}`}>
+      <summary className="language-trigger" aria-label={`${locale.toUpperCase()} ${LOCALE_LABELS[locale]}: ${label}`}>
         <img className="language-flag" src={FLAG_IMAGES[locale]} alt="" width="24" height="18" />
         <span className="language-name">{LOCALE_LABELS[locale]}</span>
         <span className="language-code">{locale.toUpperCase()}</span>
@@ -60,14 +59,14 @@ function LanguageSelector({ locale, label, onLocaleChange }) {
   );
 }
 
-export default function Header({ locale, t, onLocaleChange }) {
+export default function Header({ locale, t, heading, onLocaleChange }) {
   return (
     <header className="app-header">
       <div className="app-header-inner">
         <div className="header-identity">
-          <a className="brand-mark-link" href={`/${locale}`} aria-label={SEO_CONTENT[locale].heading}><BrandMark className="brand-mark" /></a>
+          <a className="brand-mark-link" href={`/${locale}`} aria-label={heading}><BrandMark className="brand-mark" /></a>
           <div className="brand-copy">
-            <a className="brand-title-link" href={`/${locale}`}><h1 className="brand-title">{SEO_CONTENT[locale].heading}</h1></a>
+            <a className="brand-title-link" href={`/${locale}`}><h1 className="brand-title">{heading}</h1></a>
             <a className="brand-byline" href={`https://www.fidalgoitsolutions.com.br/${locale === 'pt' ? 'pt' : 'en'}`} target="_blank" rel="noopener noreferrer">{t.ui.headerByline}</a>
           </div>
         </div>

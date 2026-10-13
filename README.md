@@ -43,6 +43,9 @@ The home URL selects Portuguese, English, or Spanish from the browser language p
 
 `npm run build` generates the interactive client plus complete, prerendered HTML for `/pt`, `/en`, and `/es`. Content, headings, guide, and FAQ are readable without JavaScript; React hydrates the calculator in the browser. Shared estimate URLs restore their parameters with a fresh client render.
 
+- The production build embeds the small, minified stylesheet into each HTML page to avoid a render-blocking CSS request. Development still uses Vite's CSS updates.
+- Translations and guide content live in `src/locales/` and load per language. At `/`, the client loads the preferred browser language directly; explicit language URLs hydrate their matching static HTML. Other languages and the sharing dialog load only when requested.
+
 - Each language has a translated title, description, canonical URL, reciprocal `hreflang` links, Open Graph tags, and Twitter card. Query parameters canonicalize to the clean language URL.
 - Structured data describes the publisher, website, free web application, and visible FAQ. FAQ markup does not guarantee a Google rich result.
 - `dist/robots.txt` and `dist/sitemap.xml` are generated from the same production origin. The sitemap contains the three canonical language pages; `/` serves Portuguese HTML canonicalized to `/pt` and selects the browser language after hydration.

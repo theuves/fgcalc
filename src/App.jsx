@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useId, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useId, useRef, useCallback } from 'react';
 import Header from './components/Header/Header';
 import BrandMark from './components/BrandMark';
 import ArrowUpRight from './components/ArrowUpRight';
@@ -16,19 +16,33 @@ import formatPrice from './utils/formatPrice';
 import getExchangeRates from './utils/getExchangeRates';
 import { POPULAR_CURRENCIES } from './utils/currencies';
 import { buildShareUrl, isShareableEstimate, readSharedEstimate, SHARE_QUERY_KEYS } from './utils/shareEstimate';
-import { t as localeStrings, getLocaleFromPath, SUPPORTED_LOCALES } from './utils/i18n';
-import { updateSeo } from './utils/seo';
+import { getLocaleFromPath, SUPPORTED_LOCALES, loadLocale } from './utils/locales';
+import { updateSeo } from './utils/seoMetadata';
 
 const getCurrentLocale = () => getLocaleFromPath(
   window.location.pathname,
   navigator.languages?.length ? navigator.languages : [navigator.language]
 );
 
-function App({ initialLocale = 'pt', initialSearch = '' }) {
+function App({ initialLocale = 'pt', initialTranslation, initialSearch = '' }) {
   const [initialEstimate] = useState(() => readSharedEstimate(initialSearch));
   const [region, setRegion] = useState(initialEstimate.region);
   const [currency, setCurrency] = useState(initialEstimate.currency);
-  const [locale, setLocale] = useState(initialLocale);
+  const [{ locale, messages, content }, setTranslation] = useState({ locale: initialLocale, ...initialTranslation });
+  const localeRequest = useRef(0);
+  const applyLocale = useCallback(async (nextLocale, url) => {
+    const request = ++localeRequest.current;
+    let translation;
+    try {
+      translation = await loadLocale(nextLocale);
+    } catch (error) {
+      if (request === localeRequest.current) throw error;
+      return;
+    }
+    if (request !== localeRequest.current) return;
+    if (url) window.history.pushState({}, '', url);
+    setTranslation({ locale: nextLocale, ...translation });
+  }, []);
   const [cpu, setCpu] = useState(initialEstimate.cpu);
   const [ram, setRam] = useState(initialEstimate.ram);
   const handleCpuChange = (nextCpu) => {
@@ -44,7 +58,6 @@ function App({ initialLocale = 'pt', initialSearch = '' }) {
   const isSharedSession = useRef(SHARE_QUERY_KEYS.some((key) => new URLSearchParams(initialSearch).has(key)));
   const [currencyRates, setCurrencyRates] = useState({ USD: 1 });
   const [isLoadingRates, setIsLoadingRates] = useState(true);
-  const messages = useMemo(() => localeStrings[SUPPORTED_LOCALES.includes(locale) ? locale : 'pt'], [locale]);
 
   useEffect(() => {
     if (!isSharedSession.current) return;
@@ -59,8 +72,8 @@ function App({ initialLocale = 'pt', initialSearch = '' }) {
   }, [region, currency, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot, locale]);
 
   useEffect(() => {
-    updateSeo(locale);
-  }, [locale]);
+    updateSeo(locale, content);
+  }, [locale, content]);
 
   useEffect(() => {
     if (window.location.pathname === '/') {
@@ -68,23 +81,35 @@ function App({ initialLocale = 'pt', initialSearch = '' }) {
       const url = new URL(window.location.href);
       url.pathname = `/${preferredLocale}`;
       window.history.replaceState(window.history.state, '', url);
-      // The static root is Portuguese; browser preferences apply after hydration.
-      setLocale(preferredLocale);
+      // The static root is Portuguese; the client uses browser preferences.
+      if (preferredLocale !== initialLocale) {
+        applyLocale(preferredLocale).catch((error) => console.error('Failed to load language:', error));
+      }
     }
-  }, []);
+  }, [applyLocale, initialLocale]);
 
   useEffect(() => {
-    const onPopState = () => setLocale(getCurrentLocale());
+    const onPopState = () => {
+      applyLocale(getCurrentLocale()).catch(() => window.location.reload());
+    };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, []);
+  }, [applyLocale]);
 
-  const changeLocale = (nextLocale) => {
-    if (!SUPPORTED_LOCALES.includes(nextLocale) || nextLocale === locale) return;
+  const changeLocale = async (nextLocale) => {
+    if (!SUPPORTED_LOCALES.includes(nextLocale)) return;
+    if (nextLocale === locale) {
+      // Cancel an in-flight language change if the visitor selects this one.
+      localeRequest.current += 1;
+      return;
+    }
     const url = new URL(window.location.href);
     url.pathname = `/${nextLocale}`;
-    window.history.pushState({}, '', url);
-    setLocale(nextLocale);
+    try {
+      await applyLocale(nextLocale, url);
+    } catch {
+      window.location.assign(url);
+    }
   };
 
   useEffect(() => {
@@ -146,7 +171,7 @@ function App({ initialLocale = 'pt', initialSearch = '' }) {
   return (
     <div className="app-shell">
       <a href="#calculator" className="skip-link">{messages.skipToCalculator}</a>
-      <Header locale={locale} t={messages} onLocaleChange={changeLocale} />
+      <Header locale={locale} t={messages} heading={content.heading} onLocaleChange={changeLocale} />
 
       <main id="calculator" className="workspace">
         <section className="calculator-intro" aria-labelledby="calculator-intro-title">
@@ -169,8 +194,10 @@ function App({ initialLocale = 'pt', initialSearch = '' }) {
                 <div className="field"><label className="field-label" htmlFor={regionId}>{messages.selectors.regionLabel}</label><RegionInput id={regionId} value={region} onChange={setRegion} t={messages} /></div>
                 <div className="field"><label className="field-label" htmlFor={currencyId}>{messages.selectors.currencyLabel}</label><CurrencyInput id={currencyId} value={currency} onChange={setCurrency} currencyList={availableCurrencies} t={messages} locale={locale} /></div>
               </div>
-              {isLoadingRates && <p className="field-note" role="status">{messages.header.updatingRates}</p>}
-              {!isLoadingRates && (!Number.isFinite(currencyRates[currency]) || currencyRates[currency] <= 0) && <p className="field-note" role="status">{messages.header.ratesUnavailable}</p>}
+              <p className="field-note exchange-rate-status" role="status">
+                {isLoadingRates ? messages.header.updatingRates
+                  : (!Number.isFinite(currencyRates[currency]) || currencyRates[currency] <= 0) ? messages.header.ratesUnavailable : ''}
+              </p>
             </div>
 
             <div className="field-group">
@@ -254,7 +281,7 @@ function App({ initialLocale = 'pt', initialSearch = '' }) {
             ))}
           </div>
         </section>
-        <PricingGuide locale={locale} awsPricingUrl={awsPricingUrl} />
+        <PricingGuide content={content} awsPricingUrl={awsPricingUrl} />
       </main>
 
       <section className="company-cta" aria-labelledby="company-cta-title">

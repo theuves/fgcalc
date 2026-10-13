@@ -16,7 +16,16 @@ try {
     build: { ssr: 'src/entry-server.jsx', outDir: serverDir, emptyOutDir: true },
   });
   const { render } = await import(pathToFileURL(resolve(serverDir, 'entry-server.js')).href);
-  const template = await readFile('dist/index.html', 'utf8');
+  let template = await readFile('dist/index.html', 'utf8');
+  // The small site stylesheet can ship with the prerendered HTML, so the first
+  // paint never waits for a second request and remains styled without JS.
+  for (const [link, href] of template.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"]+)"[^>]*>/g)) {
+    if (!href.startsWith('/assets/') || !href.endsWith('.css')) {
+      throw new Error(`Unexpected stylesheet URL: ${href}`);
+    }
+    const css = await readFile(resolve('dist', href.slice(1)), 'utf8');
+    template = template.replace(link, () => `<style>${css.replace(/<\/style/gi, '<\\/style')}</style>`);
+  }
   if (!template.includes('<!--seo-head-->') || !template.includes('<!--app-html-->')) {
     throw new Error('Static rendering placeholders are missing from index.html.');
   }

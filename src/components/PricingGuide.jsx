@@ -1,7 +1,4 @@
-import { SEO_CONTENT } from '../utils/seoContent.js';
-
-export default function PricingGuide({ locale, awsPricingUrl }) {
-  const content = SEO_CONTENT[locale];
+export default function PricingGuide({ content, awsPricingUrl }) {
   return (
     <>
       <section id="pricing-guide" className="pricing-guide" aria-labelledby="pricing-guide-title">

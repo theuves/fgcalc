@@ -29,6 +29,14 @@ for (const locale of SUPPORTED_LOCALES) {
     assert.ok(!html.includes('<!--seo-head-->'));
   });
 
+  test(`${locale}: prerendered content is styled without another network request`, () => {
+    const html = htmlByLocale.get(locale);
+    assert.ok(!/<link\b[^>]*rel="stylesheet"/.test(html));
+    const css = html.match(/<style>(.*?)<\/style>/s)?.[1];
+    assert.ok(css?.includes('.calculator-card'));
+    assert.ok(css?.includes('@media'));
+  });
+
   test(`${locale}: canonical, social metadata, and reciprocal language links are correct`, async () => {
     const html = htmlByLocale.get(locale);
     const seo = getSeo(locale, siteUrl);
