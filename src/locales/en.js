@@ -1,4 +1,19 @@
 export const messages = {
+    lightsail: {
+      "service": "Service",
+      "intro": "Estimate Lightsail Containers by plan and node count. Containers on each node share the resources of the selected plan.",
+      "plan": "Plan per node",
+      "nodes": "Number of nodes",
+      "months": "Number of months",
+      "monthly": "Monthly cost",
+      "resources": "Resources per node",
+      "shared": "Shared vCPU",
+      "quota": "Each service includes 500 GB of transfer per month. The allowance does not increase with the number of nodes.",
+      "billing": "Estimate for full months: plan price × nodes × months. AWS bills hourly up to the monthly cap; consult hourly rates for partial usage. Disabling the service does not stop billing.",
+      "limits": "Excludes excess transfer, databases, external storage, taxes and other services. Prices checked on October 14, 2026.",
+      "formula": "Pricing is per node, regardless of container count. Each node runs a copy of the container workload. CPU and memory are shared within the node.",
+      "shareNote": "The total may change with exchange rates and AWS prices."
+},
     ui: {
       headerByline: 'by Fidalgo IT Solutions', headerCta: 'Talk to Fidalgo',
       calculatorIntroTitle: 'About this estimate',

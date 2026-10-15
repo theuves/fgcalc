@@ -81,18 +81,19 @@ export default function ShareDialog({ estimate, locale, total, messages, onClose
       <div ref={dialogRef} className="share-dialog" role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={descriptionId}>
         <button ref={closeRef} type="button" className="share-close" aria-label={share.close} onClick={onClose}>×</button>
         <div className="share-icon"><ShareIcon /></div>
-        <span className="share-eyebrow">AWS Fargate Calculator</span>
+        <span className="share-eyebrow">{estimate.service === 'lightsail' ? 'Lightsail Containers' : 'AWS Fargate Calculator'}</span>
         <h2 id={titleId}>{share.title}</h2>
         <p id={descriptionId} className="share-description">{share.description}</p>
 
         <div className="share-preview">
           <span className="share-preview-label">{share.preview}</span>
           <strong>{total}</strong>
+          {estimate.service === 'lightsail' ? <span className="share-preview-detail">{estimate.plan} · {estimate.nodes} {messages.lightsail.nodes} · {estimate.months} {messages.sections.timeUnits.month[estimate.months === 1 ? 'singular' : 'plural']} · {estimate.currency}</span> : <>
           <span className="share-preview-detail">{estimate.region} · {estimate.cpu} vCPU · {estimate.ram} GiB · {estimate.currency}</span>
           <span className="share-preview-detail">
             {estimate.timeValue} {messages.sections.timeUnits[estimate.timeType][estimate.timeValue === 1 ? 'singular' : 'plural']}
             {' · '}{estimate.capacityFargate} Fargate · {estimate.capacityFargateSpot} Spot
-          </span>
+          </span></>}
         </div>
 
         <label className="share-url-label" htmlFor={`${titleId}-url`}>{share.urlLabel}</label>

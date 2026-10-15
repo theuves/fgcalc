@@ -305,3 +305,10 @@ a { color: inherit; text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+.service-selector { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+.service-selector button { border: 1px solid var(--border); border-radius: 7px; padding: 12px 18px; background: #fff; color: var(--brand-deep); font-weight: 600; }
+.service-selector button[aria-pressed="true"] { background: var(--brand-deep); border-color: var(--brand-deep); color: #fff; }
+.service-selector button:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+.lightsail-explanation { margin-top: 24px; }
+.lightsail-explanation a { display: inline-block; margin-top: 12px; color: var(--brand-deep); }

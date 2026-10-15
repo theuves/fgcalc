@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useId, useRef, useCallback } from 'react';
+import LightsailCalculator from './components/LightsailCalculator';
 import Header from './components/Header/Header';
 import BrandMark from './components/BrandMark';
 import ArrowUpRight from './components/ArrowUpRight';
@@ -26,6 +27,8 @@ const getCurrentLocale = () => getLocaleFromPath(
 
 function App({ initialLocale = 'pt', initialTranslation, initialSearch = '' }) {
   const [initialEstimate] = useState(() => readSharedEstimate(initialSearch));
+  const [service, setService] = useState(initialEstimate.service || 'fargate');
+  const [lightsail, setLightsail] = useState({ plan: initialEstimate.plan || 'nano', nodes: initialEstimate.nodes || 1, months: initialEstimate.months || 1 });
   const [region, setRegion] = useState(initialEstimate.region);
   const [currency, setCurrency] = useState(initialEstimate.currency);
   const [{ locale, messages, content }, setTranslation] = useState({ locale: initialLocale, ...initialTranslation });
@@ -61,7 +64,7 @@ function App({ initialLocale = 'pt', initialTranslation, initialSearch = '' }) {
 
   useEffect(() => {
     if (!isSharedSession.current) return;
-    const estimate = { region, currency, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot };
+    const estimate = service === 'lightsail' ? { service, currency, ...lightsail } : { region, currency, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot };
     if (isShareableEstimate(estimate)) {
       window.history.replaceState({}, '', buildShareUrl(window.location.href, locale, estimate));
     } else {
@@ -69,7 +72,7 @@ function App({ initialLocale = 'pt', initialTranslation, initialSearch = '' }) {
       SHARE_QUERY_KEYS.forEach((key) => url.searchParams.delete(key));
       window.history.replaceState({}, '', url);
     }
-  }, [region, currency, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot, locale]);
+  }, [region, currency, cpu, ram, timeValue, timeType, capacityFargate, capacityFargateSpot, locale, service, lightsail]);
 
   useEffect(() => {
     updateSeo(locale, content);
@@ -162,7 +165,7 @@ function App({ initialLocale = 'pt', initialTranslation, initialSearch = '' }) {
   const fargateSpotTasksId = useId();
   const ui = messages.ui;
   const companyUrl = `https://www.fidalgoitsolutions.com.br/${locale === 'pt' ? 'pt' : 'en'}`;
-  const awsPricingUrl = locale === 'pt'
+  const awsPricingUrl = service === 'lightsail' ? 'https://aws.amazon.com/lightsail/pricing/#Containers' : locale === 'pt'
     ? 'https://aws.amazon.com/pt/fargate/pricing/'
     : locale === 'es'
       ? 'https://aws.amazon.com/es/fargate/pricing/'
@@ -171,14 +174,18 @@ function App({ initialLocale = 'pt', initialTranslation, initialSearch = '' }) {
   return (
     <div className="app-shell">
       <a href="#calculator" className="skip-link">{messages.skipToCalculator}</a>
-      <Header locale={locale} t={messages} heading={content.heading} onLocaleChange={changeLocale} />
+      <Header locale={locale} t={messages} heading={service === 'lightsail' ? 'Lightsail Containers' : content.heading} onLocaleChange={changeLocale} />
 
       <main id="calculator" className="workspace">
         <section className="calculator-intro" aria-labelledby="calculator-intro-title">
           <h2 id="calculator-intro-title">{ui.calculatorIntroTitle}</h2>
-          <p>{ui.calculatorIntroText}</p>
+          <p>{service === 'lightsail' ? messages.lightsail.intro : ui.calculatorIntroText}</p>
         </section>
 
+        <div className="service-selector" role="group" aria-label={messages.lightsail.service}>
+          {['fargate', 'lightsail'].map((value) => <button key={value} type="button" aria-pressed={service === value} onClick={() => setService(value)}>{value === 'fargate' ? 'Fargate / Spot' : 'Lightsail Containers'}</button>)}
+        </div>
+        {service === 'lightsail' ? <LightsailCalculator estimate={lightsail} onChange={setLightsail} currency={currency} onCurrencyChange={setCurrency} currencyList={availableCurrencies} currencyRates={currencyRates} isLoadingRates={isLoadingRates} locale={locale} messages={messages} /> : <>
         <div className="calculator-card">
           <section className="calculator-form" aria-labelledby="config-title">
             <div className="panel-heading">
@@ -282,6 +289,7 @@ function App({ initialLocale = 'pt', initialTranslation, initialSearch = '' }) {
           </div>
         </section>
         <PricingGuide content={content} awsPricingUrl={awsPricingUrl} />
+        </>}
       </main>
 
       <section className="company-cta" aria-labelledby="company-cta-title">
@@ -313,8 +321,8 @@ function App({ initialLocale = 'pt', initialTranslation, initialSearch = '' }) {
             <div className="footer-column">
               <h3>{ui.siteFooter.appTitle}</h3>
               <a href="#calculator">{ui.siteFooter.calculator}</a>
-              <a href="#pricing-guide">{locale === 'pt' ? 'Como calcular' : locale === 'es' ? 'Cómo calcular' : 'How to calculate'}</a>
-              <a href="#faq">{locale === 'pt' ? 'Perguntas frequentes' : locale === 'es' ? 'Preguntas frecuentes' : 'Frequently asked questions'}</a>
+              {service !== 'lightsail' && <a href="#pricing-guide">{locale === 'pt' ? 'Como calcular' : locale === 'es' ? 'Cómo calcular' : 'How to calculate'}</a>}
+              {service !== 'lightsail' && <a href="#faq">{locale === 'pt' ? 'Perguntas frequentes' : locale === 'es' ? 'Preguntas frecuentes' : 'Frequently asked questions'}</a>}
               <a href={awsPricingUrl} target="_blank" rel="noopener noreferrer">{ui.siteFooter.awsPrices}</a>
               <a href="https://github.com/theuves/fgcalc" target="_blank" rel="noopener noreferrer">{ui.siteFooter.source}</a>
             </div>

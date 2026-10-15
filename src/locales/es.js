@@ -1,4 +1,19 @@
 export const messages = {
+    lightsail: {
+      "service": "Servicio",
+      "intro": "Estima Lightsail Containers por plan y cantidad de nodos. Los contenedores de cada nodo comparten los recursos del plan.",
+      "plan": "Plan por nodo",
+      "nodes": "Cantidad de nodos",
+      "months": "Cantidad de meses",
+      "monthly": "Costo mensual",
+      "resources": "Recursos por nodo",
+      "shared": "vCPU compartida",
+      "quota": "Cada servicio incluye 500 GB de transferencia al mes. La cuota no aumenta con la cantidad de nodos.",
+      "billing": "Estimación para meses completos: precio del plan × nodos × meses. AWS cobra por hora hasta el máximo mensual; consulta la tarifa por hora para uso parcial. Deshabilitar el servicio no detiene la facturación.",
+      "limits": "No incluye transferencia adicional, bases de datos, almacenamiento externo, impuestos ni otros servicios. Precios verificados el 14/10/2026.",
+      "formula": "El precio es por nodo, independientemente de la cantidad de contenedores. Cada nodo ejecuta una copia del conjunto de contenedores. La CPU y la memoria se comparten dentro del nodo.",
+      "shareNote": "El total puede cambiar con el tipo de cambio y los precios de AWS."
+},
     ui: {
       headerByline: 'por Fidalgo IT Solutions', headerCta: 'Habla con Fidalgo',
       calculatorIntroTitle: 'Sobre esta estimación',

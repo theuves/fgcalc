@@ -2,7 +2,7 @@
 
 AWS Fargate pricing calculator with a Fidalgo IT Solutions interface.
 
-Estimate costs for Fargate and Fargate Spot quickly using region, vCPU, memory, task count and period.
+Estimate costs for Fargate and Fargate Spot using region, vCPU, memory, task count and period, or select the separate Lightsail Containers calculator.
 
 ## What it is
 
@@ -31,6 +31,12 @@ The home URL selects Portuguese, English, or Spanish from the browser language p
 2. Configure time, CPU, memory, Fargate tasks, and Fargate Spot tasks.
 3. Read total estimate and breakdown instantly.
 4. Use **Share** to copy a URL that restores the selected configuration. The total is recalculated when the link opens, so exchange rates and Fargate Spot prices may produce a different amount.
+
+## Lightsail Containers
+
+Select **Lightsail Containers** above the calculator. Choose one of the six plans, 1–20 nodes, a number of full months, and currency. The estimate is `monthly plan price × nodes × months × exchange rate`. Share links preserve this configuration and open the Lightsail option directly.
+
+Prices in `src/utils/lightsail.js` were checked against the [official AWS pricing page](https://aws.amazon.com/lightsail/pricing/#Containers) on October 14, 2026: Nano $7, Micro $10, Small $15, Medium $40, Large $80, XLarge $160 per node/month. CPU and RAM are shared by containers within each node. Each service includes 500 GB of transfer per month regardless of node count; excess transfer and external services are excluded. This calculator estimates full monthly plans; AWS bills partial usage hourly up to the monthly cap. Disabled services still incur charges.
 
 ## Data sources
 

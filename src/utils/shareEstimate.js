@@ -1,3 +1,4 @@
+import { calculateLightsail } from './lightsail.js';
 import regions from './data.js';
 import { POPULAR_CURRENCIES } from './currencies.js';
 import { CPU_VALUES, getMemoryValues } from './fargateResources.js';
@@ -5,7 +6,7 @@ import { CPU_VALUES, getMemoryValues } from './fargateResources.js';
 const regionCodes = new Set(regions.map(({ region }) => region));
 const currencyCodes = new Set(POPULAR_CURRENCIES.slice(0, 10));
 const timeUnits = new Set(['hour', 'day', 'month', 'year']);
-export const SHARE_QUERY_KEYS = ['region', 'currency', 'cpu', 'memory', 'duration', 'unit', 'fargate', 'spot'];
+export const SHARE_QUERY_KEYS = ['region', 'currency', 'cpu', 'memory', 'duration', 'unit', 'fargate', 'spot', 'service', 'plan', 'nodes', 'months'];
 
 export const DEFAULT_ESTIMATE = {
   region: 'us-east-1',
@@ -30,6 +31,10 @@ export function readSharedEstimate(search) {
   const validCpu = CPU_VALUES.includes(cpu) ? cpu : DEFAULT_ESTIMATE.cpu;
   const ram = Number(params.get('memory'));
 
+  if (params.get('service') === 'lightsail') {
+    const lightsail = { service: 'lightsail', plan: params.get('plan'), nodes: parseInteger(params.get('nodes'), 1, 1), months: parseInteger(params.get('months'), 1, 1), currency: currencyCodes.has(params.get('currency')) ? params.get('currency') : 'USD' };
+    return { ...DEFAULT_ESTIMATE, ...lightsail, ...(calculateLightsail(lightsail) ? {} : { plan: 'nano', nodes: 1, months: 1 }) };
+  }
   return {
     region: regionCodes.has(params.get('region')) ? params.get('region') : DEFAULT_ESTIMATE.region,
     currency: currencyCodes.has(params.get('currency')) ? params.get('currency') : DEFAULT_ESTIMATE.currency,
@@ -43,6 +48,7 @@ export function readSharedEstimate(search) {
 }
 
 export function isShareableEstimate(estimate) {
+  if (estimate.service === 'lightsail') return currencyCodes.has(estimate.currency) && calculateLightsail(estimate) !== null;
   return regionCodes.has(estimate.region)
     && currencyCodes.has(estimate.currency)
     && CPU_VALUES.includes(estimate.cpu)
@@ -59,6 +65,10 @@ export function buildShareUrl(baseUrl, locale, estimate) {
   url.pathname = `/${locale}`;
   url.search = '';
   url.hash = '';
+  if (estimate.service === 'lightsail') {
+    for (const key of ['service', 'plan', 'nodes', 'months', 'currency']) url.searchParams.set(key, String(estimate[key]));
+    return url.toString();
+  }
   url.searchParams.set('region', estimate.region);
   url.searchParams.set('currency', estimate.currency);
   url.searchParams.set('cpu', String(estimate.cpu));
